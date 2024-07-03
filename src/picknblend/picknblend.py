@@ -16,10 +16,10 @@ logger = logging.getLogger(__name__)
 def parse_args():
     formatter = lambda prog: argparse.HelpFormatter(prog, max_help_position=35)
     parser = argparse.ArgumentParser(
-        prog="kbe",
+        prog="picknblend",
         prefix_chars="-",
         formatter_class=formatter,
-        description="kbe - script used to provide PCB 3D models and renders from PCB production files. Program must be run in project workdir.",
+        description="tool for populating PCB models with components based on BOM/PNP data",
     )
     parser.add_argument(
         "-d",
@@ -52,7 +52,6 @@ def parse_args():
         default="default",
     )
 
-    # arguments = sys.argv[sys.argv.index("--") + 1 :]  # omit blender arguments
     return parser.parse_args()
 
 
