@@ -91,13 +91,6 @@ def set_logging(use_debug):
     root.addHandler(stdout_handler)
 
 
-def clear_scene():
-    for obj in bpy.data.objects:
-        bpy.data.objects.remove(obj)
-    while len(bpy.context.scene.collection.children) > 0:
-        bpy.data.collections.remove(bpy.context.scene.collection.children[0])
-
-
 def save_pcb_blend(path, apply_transforms=False):
     # bpy.ops.file.pack_all()  # Pack all used external files into this .blend
     if apply_transforms:
