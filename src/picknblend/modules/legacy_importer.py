@@ -6,6 +6,8 @@ from unidecode import unidecode
 from math import radians, ceil
 from mathutils import Vector
 import logging
+import picknblend.modules.legacy_config as legacy_config
+import picknblend.modules.legacy_custom_utilities as cu
 
 logger = logging.getLogger(__name__)
 
@@ -97,7 +99,7 @@ def import_comp(
     new_obj.select_set(True)
     bpy.ops.object.make_single_user(type="SELECTED_OBJECTS", object=True, obdata=True)
 
-    if config.blendcfg["EFFECTS"]["SHOW_MECHANICAL"]:
+    if legacy_config.blendcfg["EFFECTS"]["SHOW_MECHANICAL"]:
         try:
             if new_obj["PRIO"] != 0:  # check only sub-models models
                 # add translation/rotation of submodel to initial connector's position
@@ -155,7 +157,7 @@ def import_comp(
     cu.recalc_normals(new_obj)
 
     # adding submodels for footprints with several 3D models
-    if config.blendcfg["EFFECTS"]["SHOW_MECHANICAL"] and "PRIO" in list(new_obj.keys()):
+    if legacy_config.blendcfg["EFFECTS"]["SHOW_MECHANICAL"] and "PRIO" in list(new_obj.keys()):
         logging.debug(f"'{name}' keys: {list(new_obj.keys())}")
         logging.debug(f"PRIO value: {new_obj['PRIO']}")
         if new_obj["PRIO"] != 0:  # check only main models
@@ -181,7 +183,7 @@ def import_comp(
             # get translation and rotation of submodel
             submodel_pos = new_obj[f"{str(j)}_{submodel_footprint}_POS"]
             submodel_rotate = new_obj[f"{str(j)}_{submodel_footprint}_ROTATE"]
-            for lib in config.libraries:
+            for lib in legacy_config.libraries:
                 if os.path.exists(lib + submodel_footprint + ".blend"):
                     import_comp(
                         pcb,
@@ -209,21 +211,21 @@ def process_one_side(
     models_imported,
     total_thickness=0,
 ):
-    csv_input = read_pos_csv(config.fab_path, pnp_file_name)
+    csv_input = read_pos_csv(legacy_config.fab_path, pnp_file_name)
     for ref, val, pkg, posx, posy, rot, side in csv_input:
         name = ref + ":" + val
 
         model_summary["total_models"] += 1
         # check if markings used
         ahid = ""
-        if config.bom_path != "":
+        if legacy_config.bom_path != "":
             if pkg not in marking_id_data:
                 logger.warning(f"Footprint {pkg} not found in BOM file. Ignoring marking")
             elif f"{pkg}-{marking_id_data[pkg]}" in blend_models_list:
                 ahid = marking_id_data[pkg]
                 pkg = f"{pkg}-{marking_id_data[pkg]}"
         ref_prefix = ref.strip("0123456789")
-        if not config.blendcfg["EFFECTS"]["SHOW_MECHANICAL"] and ref_prefix == "A":
+        if not legacy_config.blendcfg["EFFECTS"]["SHOW_MECHANICAL"] and ref_prefix == "A":
             continue
         # check if blend model exists
         if pkg in blend_models_list:
@@ -262,7 +264,7 @@ def process_one_side(
         bpy.ops.object.parent_set(keep_transform=True)
         bpy.ops.object.select_all(action="DESELECT")
 
-    if config.blendcfg["EFFECTS"]["SHOW_MECHANICAL"]:
+    if legacy_config.blendcfg["EFFECTS"]["SHOW_MECHANICAL"]:
         comp_col = bpy.data.collections.get("Misc")
         for obj in comp_col.objects:
             if obj.parent is not None:
@@ -288,7 +290,7 @@ def convert_to_id(string: str) -> str:
 def get_pnp(pnp_csv_mask):
     """pnp_csv_mask is pnp csv name ending phrase"""
 
-    for file in os.listdir(config.fab_path):
+    for file in os.listdir(legacy_config.fab_path):
         if file.endswith(pnp_csv_mask):
             return file
     return False
@@ -335,25 +337,25 @@ def import_all_components(board_col, total_thickness):
     top_pnp = get_pnp("top-pos.csv")
     bot_pnp = get_pnp("bottom-pos.csv")
 
-    main_col = bpy.data.collections.get(config.PCB_name)
+    main_col = bpy.data.collections.get(legacy_config.PCB_name)
     marking_id_data = dict()
-    if config.bom_path != "":
+    if legacy_config.bom_path != "":
         # import BOM data
         logger.info("Importing BOM data")
-        with open(config.bom_path, "r") as bom:
+        with open(legacy_config.bom_path, "r") as bom:
             bom_file = list(csv.reader(bom, delimiter=",", quotechar='"'))
         for line in bom_file[1:]:
             marking_id_data[line[3]] = convert_to_id(f"{line[4]}-{line[5]}")
 
     cu.create_collection("Components", main_col)
-    if config.blendcfg["EFFECTS"]["SHOW_MECHANICAL"]:
+    if legacy_config.blendcfg["EFFECTS"]["SHOW_MECHANICAL"]:
         cu.create_collection("Misc", main_col)
 
     model_summary = {"total_models": 0, "not_found_models": 0}
 
     # dict with model names and path to them
     blend_models_list = {}
-    for lib_path in config.libraries:
+    for lib_path in legacy_config.libraries:
         for file in os.listdir(lib_path):
             file_split = os.path.splitext(file)
             if file_split[1] == ".blend":
@@ -420,5 +422,5 @@ def get_top_bottom_component_lists():
             top_comps.append(comp)
         elif comp["PCB_Side"] == "B":
             bot_comps.append(comp)
-    config.top_components = top_comps
-    config.bottom_components = bot_comps
+    legacy_config.top_components = top_comps
+    legacy_config.bottom_components = bot_comps

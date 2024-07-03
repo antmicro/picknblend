@@ -1,0 +1,167 @@
+default: &default
+  SETTINGS:
+    CYCLES_SAMPLES: 32              # quality of final render, influences rendering speed
+    FPS: 25                         # animations FPS; value lower than 5 may result in blurred results
+    WIDTH: 1920
+    HEIGHT: 1920
+    WEBM_WIDTH: 740
+    WEBM_HEIGHT: 740
+    THUMBNAIL_WIDTH: 320
+    THUMBNAIL_HEIGHT: 320
+    KEEP_PNGS: False
+    SAVE_SCENE: False               # saves *_scene.blend file with entire studio and camera setup included
+    THUMBNAILS: True                # enables thumbnails for eligible outputs
+    INTERACTIVE: Default            # reference pool for hotareas ("Default" (["A", "J", "PS", "T", "U", "IC", "POT"]) or list)
+
+  NAMING:
+    RENDER_DIR: blender_renders     # default directory name for storing renders
+    FAB_DIR: fab                    # default directory name containing fabrication files
+    BOM_DIR: doc                    # default directory name containing BOM file
+    PROJECT_EXTENSION: .kicad_pro   # default extension of project based on which kbe generates name of .blend
+
+  EFFECTS:
+    BACKGROUND: paper_black         # name of .blend file from 'antmicro-blender-models/lib/backgrounds' containing background
+                                    # use Transparent to render w/o background; can be multiple values separated by comma
+    LIGHTS_COLOR: FFFFFF
+    LIGHTS_INTENSITY: 20000
+    DEPTH_OF_FIELD: True
+    SHOW_MECHANICAL: False          # imports additional components like plugs
+    SHOW_MARKINGS: True             # if True, requires *bom-populated.csv output           
+    
+  OUTPUT:
+    RENDERS: True
+    STACKUP: False                    # if True, requires stackup.json output, generates board split into layers
+    HOTAREAS: False                   # if True, hotareas for components will be rendered for picked views
+    ANIMATIONS: False
+    TRANSITIONS: False, Renders       # options = All - renders all 28 transitions, Renders - renders transitions for views picked in RENDERS settings
+    FREESTYLE: False                  # wireframe rendering (legacy and not maintained)
+
+  RENDERS:
+    TOP: True
+    BOTTOM: False
+    ORTHO: False
+    ISO: True
+    PERSP: False
+    FRONT: False
+    LEFT: False
+    RIGHT: False
+    PHOTO: True
+
+  ANIMATION:
+    CAMERA360: False
+    CAMERA180: False
+    CAMERA_OVAL: False
+    COMP_RAIN: False
+    COMP_PLACE: False
+    STACKUP_EXPLODE: False
+    LED_ON: False
+    
+hardware_portal:
+  <<: *default
+  SETTINGS:
+    CYCLES_SAMPLES: 32              # quality of final render, influences rendering speed
+    FPS: 25                         # animations FPS
+    WIDTH: 1200
+    HEIGHT: 1200
+    WEBM_WIDTH: 740
+    WEBM_HEIGHT: 740
+    THUMBNAIL_WIDTH: 320
+    THUMBNAIL_HEIGHT: 320
+    KEEP_PNGS: False
+    SAVE_SCENE: False               # saves *_scene.blend file with entire studio and camera setup included
+    THUMBNAILS: True                # enables thumbnails for eligible outputs
+    INTERACTIVE: Default  
+    
+  EFFECTS:
+    BACKGROUND: paper_black
+    LIGHTS_COLOR: FFFFFF
+    LIGHTS_INTENSITY: 20000
+    DEPTH_OF_FIELD: True
+    SHOW_MECHANICAL: False   
+    SHOW_MARKINGS: True                    
+
+  OUTPUT:
+    RENDERS: False
+    STACKUP: True
+    HOTAREAS: True            
+    ANIMATIONS: False
+    TRANSITIONS: True, All  
+    FREESTYLE: False       
+
+hrafn:
+  <<: *default
+  SETTINGS:
+    CYCLES_SAMPLES: 32              # quality of final render, influences rendering speed
+    FPS: 25                         # animations FPS
+    WIDTH: 1200
+    HEIGHT: 1200
+    WEBM_WIDTH: 740
+    WEBM_HEIGHT: 740
+    THUMBNAIL_WIDTH: 320
+    THUMBNAIL_HEIGHT: 320
+    KEEP_PNGS: False
+    SAVE_SCENE: False               # saves *_scene.blend file with entire studio and camera setup included
+    THUMBNAILS: True                # enables thumbnails for eligible outputs
+    INTERACTIVE: Default  
+    
+  EFFECTS:
+    BACKGROUND: Transparent
+    LIGHTS_COLOR: FFFFFF
+    LIGHTS_INTENSITY: 20000
+    DEPTH_OF_FIELD: True
+    SHOW_MECHANICAL: False   
+    SHOW_MARKINGS: True                    
+
+  OUTPUT:
+    RENDERS: False
+    STACKUP: False
+    HOTAREAS: True            
+    ANIMATIONS: False
+    TRANSITIONS: True, Renders  
+    FREESTYLE: False   
+
+  RENDERS:
+    TOP: True
+    BOTTOM: True
+    ORTHO: True
+    ISO: False
+    PERSP: False
+    FRONT: False
+    LEFT: False
+    RIGHT: False
+    PHOTO: False    
+
+debug:
+  <<: *default
+  SETTINGS:
+    CYCLES_SAMPLES: 1                                                        
+    FPS: 5                         
+    WIDTH: 740
+    HEIGHT: 740
+    WEBM_WIDTH: 740
+    WEBM_HEIGHT: 740
+    THUMBNAIL_WIDTH: 320
+    THUMBNAIL_HEIGHT: 320
+    KEEP_PNGS: True
+    SAVE_SCENE: False               
+    THUMBNAILS: True                
+    INTERACTIVE: Default
+
+  OUTPUT:
+    RENDERS: True
+    STACKUP: True                    
+    HOTAREAS: True                    
+    ANIMATIONS: False
+    TRANSITIONS: True, All  
+    FREESTYLE: False 
+
+  RENDERS: 
+    TOP: True             
+    BOTTOM: True         
+    ORTHO: True
+    ISO: True
+    PERSP: False
+    FRONT: False
+    LEFT: False
+    RIGHT: False
+    PHOTO: False
