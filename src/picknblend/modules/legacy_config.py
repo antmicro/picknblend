@@ -19,7 +19,6 @@ def init_global_paths(arguments):
     global kbe_dir_path
     global blendcfg
     global fab_path
-    global mat_library_path
     global model_library_path
     global libraries
     global doc_path
@@ -40,7 +39,6 @@ def init_global_paths(arguments):
         sys.exit("Blender model library not installed")
 
     libraries = [model_library_path + "/assets/", model_library_path + "/assets/raw/"]
-    mat_library_path = model_library_path + "/lib/materials/pcb_materials.blend"
 
     project_extension = blendcfg["NAMING"]["PROJECT_EXTENSION"]
     if arguments.blend_path is None:
