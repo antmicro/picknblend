@@ -408,19 +408,3 @@ def read_pos_csv(path, filename):
         for i in range(len(input)):  # change side to single letter
             input[i][-1] = sides[input[i][-1]]
         return input
-
-
-# read all components and divide them into top/bottom components lists
-def get_top_bottom_component_lists():
-    components = bpy.data.collections.get("Components")
-    top_comps = []
-    bot_comps = []
-    for comp in components.objects:
-        if "PCB_Side" not in comp.keys():
-            continue
-        if comp["PCB_Side"] == "T":
-            top_comps.append(comp)
-        elif comp["PCB_Side"] == "B":
-            bot_comps.append(comp)
-    legacy_config.top_components = top_comps
-    legacy_config.bottom_components = bot_comps

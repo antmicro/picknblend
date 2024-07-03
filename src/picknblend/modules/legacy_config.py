@@ -20,15 +20,9 @@ def init_global_paths(arguments):
     global blendcfg
     global fab_path
     global mat_library_path
-    global mat_blend_path
     global model_library_path
-    global env_texture_name
-    global env_texture_path
     global libraries
-    global anim_path
     global doc_path
-    global renders_path
-    global hotareas_path
     global pcb_blend_path
     global PCB_name
 
@@ -41,20 +35,12 @@ def init_global_paths(arguments):
     # paths:
     fab_path = project_path + blendcfg["NAMING"]["FAB_DIR"] + "/"
     doc_path = project_path + blendcfg["NAMING"]["BOM_DIR"] + "/"
-    renders_path = project_path + blendcfg["NAMING"]["RENDER_DIR"] + "/"
-    anim_path = project_path + "assets/previews/"
-    hotareas_path = project_path + "assets/hotareas/"
-    mat_blend_path = kbe_dir_path + "/templates/materials.blend"
     model_library_path = next(load_data_paths("antmicro-blender-models"), None)
     if model_library_path is None:
         sys.exit("Blender model library not installed")
 
     libraries = [model_library_path + "/assets/", model_library_path + "/assets/raw/"]
     mat_library_path = model_library_path + "/lib/materials/pcb_materials.blend"
-
-    env_texture_name = "studio_small_03_4k.exr"
-    env_texture_path = kbe_dir_path + "/templates/" + env_texture_name
-    mat_blend_path = kbe_dir_path + "/templates/materials.blend"
 
     project_extension = blendcfg["NAMING"]["PROJECT_EXTENSION"]
     if arguments.blend_path is None:
@@ -71,15 +57,7 @@ def init_global_data(skip_fab=False):
     global fab_path
     global blendcfg
     global bom_path
-    global cam_types
-    global all_light_objects
-    global top_components
-    global bottom_components
-    global rendered_obj
-    global isPCB
-    global isComponent
 
-    rendered_obj = None
     if not skip_fab:
         fio.check_fab_dir_exist(fab_path)
         # Read BOM if MARKINGS used
@@ -95,32 +73,3 @@ def init_global_data(skip_fab=False):
             if not pth.isfile(bom_path):
                 logger.error(f"No BOM-populated file found in {doc_path}. Aborting.")
                 sys.exit(1)
-
-    # lists automatically appended when light/camera class object made
-    all_light_objects = []
-    top_components = []
-    bottom_components = []
-
-    # type : index for blendcfg COMP_ONLY[]
-    cam_types = {
-        "ORTHO": 0,
-        "ISO": 1,
-        "PERSP": 2,
-        "FRONT": 3,
-        "LEFT": 4,
-        "RIGHT": 5,
-        "PHOTO": 6,
-    }
-
-
-# blender requirement, usefull for API additions
-def register():
-    pass
-
-
-def unregister():
-    pass
-
-
-if __name__ == "__main__":
-    register()

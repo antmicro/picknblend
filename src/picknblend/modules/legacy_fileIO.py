@@ -239,26 +239,3 @@ def read_pcb_name(path, project_extension):
 def open_blendfile(blendfile):
     logger.info(f"Opening existing file: {blendfile}")
     bpy.ops.wm.open_mainfile(filepath=blendfile)
-
-
-def import_from_blendfile(blendfile, data_type, filter_func=lambda x: True):
-    try:
-        with bpy.data.libraries.load(blendfile) as (data_from, data_to):
-            filtered_data = list(filter(filter_func, getattr(data_from, data_type)))
-            setattr(data_to, data_type, filtered_data)
-            logger.debug("found data " + data_type + " in file " + blendfile)
-            return filtered_data
-    except:
-        logger.error("failed to open blend file " + blendfile)
-    return None
-
-
-def get_data_from_blendfile(blendfile, data_type, filter_func=lambda x: True):
-    result = None
-    try:
-        with bpy.data.libraries.load(blendfile) as (data_from, data_to):
-            result = list(filter(filter_func, getattr(data_from, data_type)))
-            logger.debug("found data " + data_type + " in file " + blendfile)
-    except:
-        logger.error("failed to open blend file " + blendfile)
-    return result

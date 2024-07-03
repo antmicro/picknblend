@@ -6,7 +6,7 @@ import logging
 import picknblend.modules.legacy_config as legacy_config
 import picknblend.modules.legacy_custom_utilities as cu
 import picknblend.modules.legacy_fileIO as fio
-from picknblend.modules.legacy_importer import import_all_components, get_top_bottom_component_lists
+from picknblend.modules.legacy_importer import import_all_components
 from os import path
 
 
@@ -167,68 +167,28 @@ def main():
     try:
         args = parse_args()
         set_logging(args.debug)
-        clear_scene()
 
         legacy_config.init_global_paths(args)
         type_dict = establish_needed_data(legacy_config.pcb_blend_path, args.regenerate)
 
         legacy_config.init_global_data(skip_fab=type_dict["skipData"])
-        legacy_config.isPCB = type_dict["isPCB"]
-        legacy_config.isComponent = type_dict["isComponent"]
         fio.open_blendfile(legacy_config.pcb_blend_path)
 
         if type_dict["isPCB"]:  # isPCB and no components
             #    ========== process single board ==========
             # if no components are found on mesh, imports them and then saves the PCB
             logger.info("Recognized PCB model")
-            legacy_config.rendered_obj = bpy.data.objects[legacy_config.PCB_name]
+            pcb = bpy.data.objects[legacy_config.PCB_name]
             board_col = bpy.data.collections.get("Board")
 
             if args.regenerate:
                 logger.info("Removing 'Components' collection")
                 cu.remove_collection("Components")
-            import_all_components(board_col, legacy_config.rendered_obj.dimensions.z)
+
+            import_all_components(board_col, pcb.dimensions.z)
 
             if not type_dict["skipData"]:
                 save_pcb_blend(legacy_config.pcb_blend_path, apply_transforms=True)
-
-            get_top_bottom_component_lists()
-
-        elif type_dict["isComponent"]:
-            #    ========== process component with pads ==========
-            logger.info("Recognized component with pads")
-            component_col = bpy.data.collections.get("Component", None)
-            pads_col = bpy.data.collections.get("Pads", None)
-
-            legacy_config.rendered_obj = component_col.objects[0] if component_col else None
-            if legacy_config.rendered_obj is None:
-                logger.error("Did not find any object under 'Component' collection. Aborting!")
-                sys.exit(1)
-            logger.info(f"Found component object: {legacy_config.rendered_obj}")
-
-            cu.apply_display_rot(legacy_config.rendered_obj)
-            legacy_config.top_components = pads_col.objects if pads_col else []
-            legacy_config.bottom_components = pads_col.objects if pads_col else []
-
-        else:
-            #    ========== process assembly/unknown file ==========
-            if type_dict["isAssembly"]:
-                logger.info("Recognized assembly model")
-                col = bpy.data.collections.get("Assembly")
-            elif type_dict["isUnknown"]:
-                # get main collection under Scene Collection
-                col = bpy.context.scene.collection.children[0]
-            bbox_mesh = cu.get_bbox_linked(col)
-            # parent to empty object (pcb_parent)
-            bpy.ops.object.select_all(action="DESELECT")
-            for obj in col.objects:
-                obj.select_set(True)
-            cu.link_obj_to_collection(bbox_mesh, col)
-            # active obj will be parent
-            bpy.context.view_layer.objects.active = bbox_mesh
-            bpy.ops.object.parent_set(keep_transform=True)
-            bpy.ops.object.select_all(action="DESELECT")
-            legacy_config.rendered_obj = bbox_mesh
 
     except Exception:
         print(traceback.format_exc())
