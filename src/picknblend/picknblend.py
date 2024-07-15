@@ -3,10 +3,10 @@ import traceback
 import sys
 import argparse
 import logging
-import picknblend.modules.legacy_config as legacy_config
-import picknblend.modules.legacy_custom_utilities as cu
-import picknblend.modules.legacy_fileIO as fio
-from picknblend.modules.legacy_importer import import_all_components
+import picknblend.modules.config as config
+import picknblend.modules.custom_utilities as cu
+import picknblend.modules.importer as importer
+import picknblend.core.log as log
 from os import path
 
 
@@ -55,137 +55,40 @@ def parse_args():
     return parser.parse_args()
 
 
-class CustomFormatter(logging.Formatter):
-    # use ansi escape styles
-    # https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797#colors--graphics-mode
-    grey = "\x1b[38;21m"
-    blue = "\x1b[38;5;39m"
-    yellow = "\x1b[33m"  # ;21;5
-    red = "\x1b[31m"  # ;21
-    bold_red = "\x1b[31;1m"
-    reset = "\x1b[0m"  # clears formating
-    format = "[%(asctime)s] (%(levelname)s) %(message)s"
-    FORMATS = {
-        logging.DEBUG: blue + format + reset,
-        logging.INFO: grey + format + reset,
-        logging.WARNING: yellow + format + reset,
-        logging.ERROR: red + format + reset,
-        logging.CRITICAL: bold_red + format + reset,
-    }
-
-    def format(self, record):
-        datefmt = "%H:%M:%S"  # "%d.%m.%Y %H:%M:%S"
-        log_fmt = self.FORMATS.get(record.levelno)
-        formatter = logging.Formatter(log_fmt, datefmt)
-        return formatter.format(record)
-
-
-def set_logging(use_debug):
-    root = logging.getLogger()
-    level = logging.DEBUG if use_debug else logging.INFO
-    root.setLevel(level)
-    stdout_handler = logging.StreamHandler()
-    stdout_handler.setLevel(level)
-    stdout_handler.setFormatter(CustomFormatter())
-    root.addHandler(stdout_handler)
-
-
-def save_pcb_blend(path, apply_transforms=False):
-    # bpy.ops.file.pack_all()  # Pack all used external files into this .blend
-    if apply_transforms:
-        for obj in bpy.context.scene.objects:
-            cu.apply_all_transform_obj(obj)
-    bpy.ops.wm.save_as_mainfile(filepath=path)
-
-
-def establish_needed_data(pcb_blend_path, regenerate):
-    """
-    This should work according to following logic
-    - kbe should be always run with blender model path as argument
-    - if 'Assembly' collection is found in the data -> follow the old kbe -b flow for assemblies, set isPCB to false, do not request inputs
-    - if 'Board' collection is found but no 'Components' -> request inputs: pnp (mandatory), bom (if SHOW_MARKINGS), set isPCB to true
-    - if 'Board' and 'Components' collections are found and regenerate flag not set -> do not request inputs, set isPCB to true
-    - if 'Board' and 'Components' collections are found and '-r' switch present -> remove old components and add them once again;
-        request inputs: pnp (mandatory), bom (if SHOW_MARKINGS), set isPCB to true
-    - if 'Component' and 'Pads' are found -> special case when rendering component (behaviour yet to be established)
-    """
-
-    if not path.exists(pcb_blend_path):
-        logger.error(f"Blender model: {pcb_blend_path} doesn't exist yet, run gerber2blend first.")
-        sys.exit(1)
-
-    type_dict = {
-        "isAssembly": False,
-        "isPCB": False,
-        "isComponent": False,
-        "hasComponents": False,
-        "hasPads": False,
-        "unknown": False,
-        "skipData": False,
-    }
-
-    collection_mapping = {
-        "Assembly": "isAssembly",
-        "Board": "isPCB",
-        "Components": "hasComponents",
-        "Component": "isComponent",
-        "Pads": "hasPads",
-    }
-
-    with bpy.data.libraries.load(pcb_blend_path) as (data_from, data_to):
-        # data_to.collections = data_from.collections
-        for collection in data_from.collections:
-            if collection in collection_mapping:
-                type_dict[collection_mapping[collection]] = True
-
-    if (
-        (type_dict["hasComponents"] and type_dict["isPCB"] and not regenerate)
-        or type_dict["isAssembly"]
-        or type_dict["isComponent"]
-    ):
-        type_dict["skipData"] = True
-
-    if not any(type_dict[key] for key in collection_mapping.values()):
-        logger.warning(
-            "This file doesn't have any of supported collections ('Board' and 'Components', 'Assembly', 'Component' and 'Pads')"
-        )
-        logger.warning("It will be processed as unknown type model.")
-        type_dict["skipData"] = True
-        type_dict["isUnknown"] = True
-    return type_dict
-
-
 def main():
     try:
         args = parse_args()
-        set_logging(args.debug)
+        # Configure logger based on if we're debugging or not
+        log.set_logging(args.debug)
+        # Initialize global data
+        config.init_global(args)
 
-        legacy_config.init_global_paths(args)
-        type_dict = establish_needed_data(legacy_config.pcb_blend_path, args.regenerate)
+        cu.open_blendfile(config.pcb_blend_path)
+        if "Board" not in bpy.data.collections:
+            logger.error("Loaded model does not have the required Board collection!")
+            return 1
+        if config.PCB_name not in bpy.data.objects:
+            logger.error("Loaded model does not have a PCB object named %s!", config.PCB_name)
+            return 1
 
-        legacy_config.init_global_data(skip_fab=type_dict["skipData"])
-        fio.open_blendfile(legacy_config.pcb_blend_path)
+        logger.info("Recognized PCB model")
+        pcb = bpy.data.objects[config.PCB_name]
+        board_col = bpy.data.collections.get("Board")
 
-        if type_dict["isPCB"]:  # isPCB and no components
-            #    ========== process single board ==========
-            # if no components are found on mesh, imports them and then saves the PCB
-            logger.info("Recognized PCB model")
-            pcb = bpy.data.objects[legacy_config.PCB_name]
-            board_col = bpy.data.collections.get("Board")
+        if args.regenerate:
+            logger.info("Removing 'Components' collection")
+            cu.remove_collection("Components")
 
-            if args.regenerate:
-                logger.info("Removing 'Components' collection")
-                cu.remove_collection("Components")
+        importer.import_all_components(board_col, pcb.dimensions.z)
+        cu.save_pcb_blend(config.pcb_blend_path, apply_transforms=True)
 
-            import_all_components(board_col, pcb.dimensions.z)
+    except Exception as e:
+        logger.error("%s", str(e), exc_info=True)
+        return 1
 
-            if not type_dict["skipData"]:
-                save_pcb_blend(legacy_config.pcb_blend_path, apply_transforms=True)
-
-    except Exception:
-        print(traceback.format_exc())
-        sys.exit(1)
+    finally:
+        return 0
 
 
 if __name__ == "__main__":
-    main()
+    exit(main())
