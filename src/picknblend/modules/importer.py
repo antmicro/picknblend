@@ -118,7 +118,7 @@ def process_one_side(
             continue
 
         file_path = importer.blend_models_list[pkg]
-        lib = file_path.split(pkg)[0]
+        lib = library.find_library_by_model(file_path)
         importer.model_summary[lib] += 1
 
         import_comp(

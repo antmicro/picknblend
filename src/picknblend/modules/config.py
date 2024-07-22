@@ -3,7 +3,6 @@ import os
 from os import getcwd, path
 import picknblend.core.blendcfg as bcfg
 import picknblend.modules.file_io as fio
-from xdg.BaseDirectory import load_data_paths  # type: ignore
 
 
 def init_global(arguments: argparse.Namespace) -> None:
@@ -46,8 +45,6 @@ def configure_paths(arguments: argparse.Namespace) -> None:
     global pcb_blend_path
     global PCB_name
     global prj_path
-    global model_library_path
-    global libraries
 
     fab_path = prj_path + blendcfg["NAMING"]["FAB_DIR"] + "/"
     if not os.path.isdir(fab_path):
@@ -55,12 +52,7 @@ def configure_paths(arguments: argparse.Namespace) -> None:
             f"There is no {blendcfg['NAMING']['FAB_DIR']}/ directory in the current working directory! ({prj_path})"
         )
 
-    model_library_path = next(load_data_paths("antmicro-blender-models"), None)
-    if model_library_path is None:
-        raise RuntimeError("Blender model library not installed")
-
     doc_path = prj_path + blendcfg["NAMING"]["BOM_DIR"] + "/"
-    libraries = [model_library_path + "/assets/", model_library_path + "/assets/raw/"]
 
     # Determine the name of the PCB to use as a name for the .blend
     if arguments.blend_path is None:

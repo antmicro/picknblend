@@ -96,6 +96,7 @@ CONFIGURATION_SCHEMA = {
         "FAB_DIR": Field("string"),
         "BOM_DIR": Field("string"),
         "PROJECT_EXTENSION": Field("string"),
+        "MODEL_LIBRARY_PATHS": Field("list[str]"),
     },
     "EFFECTS": {
         "SHOW_MECHANICAL": Field("bool"),
@@ -172,6 +173,9 @@ def check_throw_error(cfg: Dict[str, Any], args: list[str], schema: Field) -> No
             assert isinstance(val, tuple), not_schema_type_err
         case "string":
             assert isinstance(val, str), not_schema_type_err
+        case "list[str]":
+            assert isinstance(val, list), not_schema_type_err
+            assert all(isinstance(x, str) for x in val), not_schema_type_err
         case _:
             raise RuntimeError(f"[{args[0]}][{args[1]}] is not a {schema.type}")
 
