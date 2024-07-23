@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 @dataclasses.dataclass
 class RequiredData:
-    """Container for storing extracted data from the CSV.
+    """Container for storing extracted data of a single row from the BOM.
 
     Note that this doesn't contain the entire CSV but only the parts
     that are required for picknblend. `csvnames` defines the names
