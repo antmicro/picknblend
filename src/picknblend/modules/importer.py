@@ -47,7 +47,7 @@ def import_all_components(board_col, total_thickness):
     logger.info("Importing components.")
 
     importer = ImporterData()
-    importer.marking_id_data = bom.load_bom(config.bom_path)
+    importer.marking_id_data = bom.parse_markings(config.bom_path)
     importer.blend_models_list = library.get_available_models()
 
     main_col = bpy.data.collections.get(config.PCB_name)
