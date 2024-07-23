@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 # Name of the configuration file
 # This is the name that is used for the template
 # and when copying the template to a local config.
-BLENDCFG_FILENAME = "kbe_blendcfg.yaml"
+BLENDCFG_FILENAME = "blendcfg.yaml"
 
 
 class Field:

@@ -20,7 +20,7 @@ license = "Apache-2.0"
 readme = "README.md"
 packages = [
     { include = "**/*.py", from = "src/" },
-    { include = "picknblend/templates/kbe_blendcfg.yaml", from = "src/" },
+    { include = "picknblend/templates/blendcfg.yaml", from = "src/" },
 ]
 
 [tool.poetry.scripts]
