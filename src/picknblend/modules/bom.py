@@ -44,8 +44,19 @@ def _load_and_parse_csv(bom_path: str) -> Generator[Dict[str, str], None, None]:
     Returns a generator producing dictionaries mapping the values
     found on each row to the keys specified in the CSV header.
     """
-    with open(bom_path, "rt", newline="") as bom:
-        reader = csv.DictReader(bom, skipinitialspace=True)
+    with open(bom_path, "rb") as bom:
+        filebytes = bom.read()
+        as_str: str = ""
+        try:
+            as_str = filebytes.decode("utf-8")
+        except UnicodeDecodeError:
+            as_str = filebytes.decode("utf-8", errors="replace")
+            logger.warning(
+                f"CSV file: {bom_path} is not valid UTF-8! "
+                "Problematic characters will be replaced with Unicode Replacement Character (U+FFFD)"
+            )
+
+        reader = csv.DictReader(as_str.splitlines(), skipinitialspace=True)
         for row in reader:
             yield row
 
