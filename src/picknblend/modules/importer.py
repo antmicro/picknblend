@@ -100,7 +100,7 @@ def process_one_side(
 
         name = ref + ":" + val
         # check if markings used
-        if config.bom_path != "":
+        if config.blendcfg["EFFECTS"]["SHOW_MARKINGS"]:
             if pkg not in importer.marking_id_data:
                 logger.warning(f"Footprint {pkg} not found in BOM file. Ignoring marking")
             elif f"{pkg}-{importer.marking_id_data[pkg]}" in importer.blend_models_list:
