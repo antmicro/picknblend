@@ -1,4 +1,3 @@
-import csv
 import logging
 from typing import Optional
 import unidecode
@@ -7,6 +6,7 @@ import os
 import dataclasses
 import functools
 from typing import Generator, Dict, List
+import picknblend.modules.csvparser as csvparser
 
 
 logger = logging.getLogger(__name__)
@@ -36,29 +36,6 @@ class RequiredData:
     """Manufacturer of the part"""
     mpn: str = dataclasses.field(metadata={"csvnames": ["MPN"]})
     """Manufacturer part number"""
-
-
-def _load_and_parse_csv(bom_path: str) -> Generator[Dict[str, str], None, None]:
-    """Perform raw parsing of the given CSV file.
-
-    Returns a generator producing dictionaries mapping the values
-    found on each row to the keys specified in the CSV header.
-    """
-    with open(bom_path, "rb") as bom:
-        filebytes = bom.read()
-        as_str: str = ""
-        try:
-            as_str = filebytes.decode("utf-8")
-        except UnicodeDecodeError:
-            as_str = filebytes.decode("utf-8", errors="replace")
-            logger.warning(
-                f"CSV file: {bom_path} is not valid UTF-8! "
-                "Problematic characters will be replaced with Unicode Replacement Character (U+FFFD)"
-            )
-
-        reader = csv.DictReader(as_str.splitlines(), skipinitialspace=True)
-        for row in reader:
-            yield row
 
 
 def _extract_data_from_row(csvrow: Dict[str, str]) -> RequiredData:
@@ -113,7 +90,7 @@ def parse_bom(bom_path: str) -> List[RequiredData]:
     bom: List[RequiredData] = []
 
     if bom_path != "":
-        for row in _load_and_parse_csv(bom_path):
+        for row in csvparser.parse(bom_path):
             bom.append(_extract_data_from_row(row))
 
     return bom
@@ -126,7 +103,7 @@ def parse_markings(bom_path: str) -> Dict[str, str]:
     if bom_path != "":
         logger.info("Importing BOM data")
 
-        for row in _load_and_parse_csv(bom_path):
+        for row in csvparser.parse(bom_path):
             data = _extract_data_from_row(row)
             marking_id_data[data.footprint] = convert_to_id(f"{data.manufacturer}-{data.mpn}")
 
