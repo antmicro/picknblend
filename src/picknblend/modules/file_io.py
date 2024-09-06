@@ -31,7 +31,7 @@ def read_pcb_name_from_prj(path: str, extension: str) -> str:
 
 def read_pcb_name(path: str) -> str:
     """Read the PCB name from the current EDA project."""
-    extension = config.blendcfg["NAMING"]["PROJECT_EXTENSION"]
+    extension = config.blendcfg["SETTINGS"]["PRJ_EXTENSION"]
     if extension != "":
         try:
             return read_pcb_name_from_prj(path, extension)

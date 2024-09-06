@@ -1,8 +1,8 @@
 default: &default
-  NAMING:
+  SETTINGS:
     FAB_DIR: fab                    # default directory name containing fabrication files
     BOM_DIR: doc                    # default directory name containing BOM file
-    PROJECT_EXTENSION: .kicad_pro   # default extension of project based on which the name of the blend is generated
+    PRJ_EXTENSION: .kicad_pro       # default extension of project based on which the name of the blend is generated
     MODEL_LIBRARY_PATHS:            # default paths to model library folders, can be overridden by MODEL_LIBRARY_PATHS
       - $HOME/.local/share/antmicro-blender-models/
       - $HOME/.local/share/antmicro-hardware-components/

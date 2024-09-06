@@ -93,7 +93,7 @@ def get_library_directories() -> List[str]:
     This takes into consideration the current blendcfg.yaml, and the
     MODEL_LIBRARY_PATHS environment variable.
     """
-    config_directories = config.blendcfg["NAMING"]["MODEL_LIBRARY_PATHS"]
+    config_directories = config.blendcfg["SETTINGS"]["MODEL_LIBRARY_PATHS"]
 
     # Split by ':' and filter out empty entries when a trailing ':' is present
     optional_env_directories = os.environ.get("MODEL_LIBRARY_PATHS", "")
