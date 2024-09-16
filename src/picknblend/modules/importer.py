@@ -1,19 +1,16 @@
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import List
 from collections import defaultdict
-from unidecode import unidecode
 from math import radians, ceil
 from mathutils import Vector
 import bpy
 import logging
-import os
 import picknblend.modules.custom_utilities as cu
 import picknblend.modules.config as config
 import picknblend.modules.bom as bom
 import picknblend.modules.library as library
 import picknblend.modules.pnp as pnp
 import picknblend.modules.components as components
-import picknblend.modules.file_io as fio
 
 
 logger = logging.getLogger(__name__)
@@ -29,6 +26,8 @@ class ImporterData:
     """Mapping of footprint -> blend file name."""
     marking_id_data: dict[str, str] = field(default_factory=dict)
     """BOM data (mapping of footprint -> ID)"""
+    pnp_list: List[pnp.ComponentData] = field(default_factory=list)
+    """BOM data (mapping of footprint -> ID)"""
 
     # Modified by the importer
 
@@ -40,40 +39,30 @@ class ImporterData:
 
 def import_all_components(board_col, total_thickness):
     """Import all components from PNP data and put them on the board."""
-
     if bpy.data.collections.get("Components"):
         logger.info("Components already imported.")
         return
     logger.info("Importing components.")
 
+    # prepare input data
     importer = ImporterData()
     importer.marking_id_data = bom.parse_markings(config.bom_path)
     importer.blend_models_list = library.get_available_models()
+    importer.pnp_list = pnp.get_pnp_files(config.fab_path)
 
     main_col = bpy.data.collections.get(config.PCB_name)
     cu.create_collection("Components", main_col)
     if config.blendcfg["EFFECTS"]["SHOW_MECHANICAL"]:
         cu.create_collection("Misc", main_col)
 
-    # process top components
-    top_pnp = fio.find_file_in_fab("top-pos.csv")
-    if top_pnp:
-        process_one_side(
-            importer,
-            board_col.objects[-1],
-            top_pnp,
-            total_thickness,
-        )
+    # process all components import
+    process_components_import(
+        importer,
+        board_col.objects[-1],
+        total_thickness,
+    )
 
-    # process bottom components
-    bot_pnp = fio.find_file_in_fab("bottom-pos.csv")
-    if bot_pnp:
-        process_one_side(
-            importer,
-            board_col.objects[0],
-            bot_pnp,
-        )
-
+    # cleanup after import
     cu.remove_collection("Temp")
     remove_duplicated_materials()
 
@@ -86,30 +75,27 @@ def import_all_components(board_col, total_thickness):
             bpy.data.collections.remove(collection)
 
 
-def process_one_side(
+def process_components_import(
     importer: ImporterData,
-    pcb,
-    pnp_file_name: str,
+    pcb: bpy.types.Object,
     total_thickness: float = 0,
-):
-    """Import components from a given PNP file onto the specified PCB object."""
-
-    csv_input = pnp.read_pos_csv(os.path.join(config.fab_path, pnp_file_name))
-    for ref, val, pkg, posx, posy, rot, side in csv_input:
+) -> None:
+    """Import components from parsed PNP files onto the specified PCB object."""
+    for component in importer.pnp_list:
         importer.model_summary["total_models"] += 1
+        ref_prefix = component.reference.strip("0123456789")
+        if not config.blendcfg["EFFECTS"]["SHOW_MECHANICAL"] and ref_prefix == "A":
+            continue
 
-        name = ref + ":" + val
+        pkg = component.footprint
+        name = component.reference + ":" + component.value
         # check if markings used
         if config.blendcfg["EFFECTS"]["SHOW_MARKINGS"]:
             if pkg not in importer.marking_id_data:
                 logger.warning(f"Footprint {pkg} not found in BOM file. Ignoring marking")
             elif f"{pkg}-{importer.marking_id_data[pkg]}" in importer.blend_models_list:
                 ahid = importer.marking_id_data[pkg]
-                pkg = f"{pkg}-{importer.marking_id_data[pkg]}"
-
-        ref_prefix = ref.strip("0123456789")
-        if not config.blendcfg["EFFECTS"]["SHOW_MECHANICAL"] and ref_prefix == "A":
-            continue
+                pkg = f"{pkg}-{ahid}"
 
         # check if blend model exists
         if pkg not in importer.blend_models_list:
@@ -121,16 +107,17 @@ def process_one_side(
         lib = library.find_library_by_model(file_path)
         importer.model_summary[lib] += 1
 
+        pos_z = 0 if component.side == "B" else total_thickness
         import_comp(
             importer,
             pcb,
             pkg,
             name,
-            posx,
-            posy,
-            side,
-            rot,
-            total_thickness,
+            component.pos_x,
+            component.pos_y,
+            component.side,
+            component.rot,
+            pos_z,
         )
 
     cu.parent_collection_to_object("Components", pcb)
@@ -138,7 +125,7 @@ def process_one_side(
         cu.parent_collection_to_object("Misc", pcb)
 
 
-def create_component(importer: ImporterData, footprint: str):
+def create_component(importer: ImporterData, footprint: str) -> bpy.types.Object:
     """Create a component object for the given footprint.
 
     If no components of this footprint were previously loaded, the model
@@ -172,7 +159,7 @@ def create_component(importer: ImporterData, footprint: str):
 
 def import_comp(
     importer: ImporterData,
-    pcb,
+    pcb: bpy.types.Object,
     footprint: str,
     name: str,
     posx: float,
@@ -180,9 +167,9 @@ def import_comp(
     side: str,
     deg: float,
     total_thickness: float,
-    sub_model_pos=[0, 0, 0],
-    sub_model_rot=[0, 0, 0],
-):
+    sub_model_pos: list[float] = [0, 0, 0],
+    sub_model_rot: list[float] = [0, 0, 0],
+) -> None:
     """Import a component onto the PCB.
 
     Import a single component with `footprint` onto the specified `pcb` object.
@@ -309,7 +296,7 @@ def import_comp(
             )
 
 
-def remove_duplicated_materials():
+def remove_duplicated_materials() -> None:
     """Remove duplicated materials across components."""
     logger.debug("Removing materials duplicates")
 

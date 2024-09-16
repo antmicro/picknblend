@@ -1,6 +1,7 @@
+import dataclasses
 import logging
 import csv
-from typing import Generator, Dict, List
+from typing import Generator, Dict, List, Type, TypeVar
 
 
 logger = logging.getLogger(__name__)
@@ -20,8 +21,8 @@ def parse(filepath: str) -> Generator[Dict[str, str], None, None]:
     obscure CSV quirks found in real-world data can be added to this method
     to provide unified parsing for PNP/BOM data.
     """
-    with open(filepath, "rb") as bom:
-        filebytes = bom.read()
+    with open(filepath, "rb") as csv_file:
+        filebytes = csv_file.read()
         as_str: str = ""
         try:
             as_str = filebytes.decode("utf-8")
@@ -35,3 +36,45 @@ def parse(filepath: str) -> Generator[Dict[str, str], None, None]:
         reader = csv.DictReader(as_str.splitlines(), skipinitialspace=True)
         for row in reader:
             yield row
+
+
+T = TypeVar("T")
+
+
+def extract_data_from_row(csvrow: Dict[str, str], data_type: Type[T]) -> T:
+    """Extract data required by picknblend from a given CSV file row.
+
+    The row is represented as a dictionary, where the key corresponds
+    to the column name from the CSV. This function translates many
+    possible names for a column to a single field in the output, like so:
+
+        csvrow["Footprint"]
+        csvrow["Package"]                 ->    data_type.footprint
+        csvrow["Fp"]
+        ...
+
+    You can add more names by adding them to the `csvnames` list of the
+    corresponding field in given `data_type` class.
+    """
+    args = {}
+    for field in dataclasses.fields(data_type):  # type:ignore
+        name: str = field.name
+        try:
+            csvnames: List[str] = field.metadata["csvnames"]
+        except Exception:
+            continue
+
+        value: None | str | float = None
+        for colname in csvnames:
+            if colname in csvrow:
+                value = field.type(csvrow[colname])
+
+        if value is None:
+            # Ignore missing column if the field has default value
+            if field.default is not dataclasses.MISSING:
+                continue
+            raise RuntimeError(
+                f"Could not find required column '{name}' in PNP file, tried looking for names: {','.join(csvnames)}"
+            )
+        args[name] = value
+    return data_type(**args)

@@ -1,8 +1,22 @@
+"""Module for configuring input data."""
+
 import argparse
 import os
 from os import getcwd, path
+from typing import Dict, Any
 import picknblend.core.blendcfg as bcfg
 import picknblend.modules.file_io as fio
+
+
+blendcfg: Dict[str, Any] = {}
+fab_path: str = ""
+prj_path: str = ""
+doc_path: str = ""
+PCB_name: str = ""
+pcb_blend_path: str = ""
+bom_path: str = ""
+pnb_dir_path: str = ""
+args: argparse.Namespace
 
 
 def init_global(arguments: argparse.Namespace) -> None:
