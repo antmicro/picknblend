@@ -27,6 +27,8 @@ class BomData:
     exist.
     """
 
+    reference: str = dataclasses.field(metadata={"csvnames": ["Ref", "Reference", "Designator"], "type": str})
+    """Reference designator of component"""
     footprint: str = dataclasses.field(metadata={"csvnames": ["Footprint", "Package"], "type": str})
     """Name of the footprint"""
     manufacturer: str = dataclasses.field(metadata={"csvnames": ["Manufacturer", "Mfr"], "type": str})
@@ -48,8 +50,8 @@ def parse_markings(bom_path: str) -> Dict[str, str]:
         logger.info("Importing BOM data")
 
         for row in csvparser.parse(bom_path):
-            data = csvparser.extract_data_from_row(row, BomData)
-            marking_id_data[data.footprint] = convert_to_id(f"{data.manufacturer}-{data.mpn}")
+            data = csvparser.extract_data_from_row(row, BomData, "BOM")
+            marking_id_data[data.reference] = convert_to_id(f"{data.manufacturer}-{data.mpn}")
 
     logger.debug("Parsed marking data: %s", marking_id_data)
 

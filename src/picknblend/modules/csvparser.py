@@ -41,7 +41,7 @@ def parse(filepath: str) -> Generator[Dict[str, str], None, None]:
 T = TypeVar("T")
 
 
-def extract_data_from_row(csvrow: Dict[str, str], data_type: Type[T]) -> T:
+def extract_data_from_row(csvrow: Dict[str, str], data_type: Type[T], file_type: str) -> T:
     """Extract data required by picknblend from a given CSV file row.
 
     The row is represented as a dictionary, where the key corresponds
@@ -74,7 +74,7 @@ def extract_data_from_row(csvrow: Dict[str, str], data_type: Type[T]) -> T:
             if field.default is not dataclasses.MISSING:
                 continue
             raise RuntimeError(
-                f"Could not find required column '{name}' in PNP file, tried looking for names: {','.join(csvnames)}"
+                f"Could not find required column '{name}' in {file_type} file, tried looking for names: {','.join(csvnames)}"
             )
         args[name] = value
     return data_type(**args)

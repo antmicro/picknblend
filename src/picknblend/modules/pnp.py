@@ -27,7 +27,7 @@ class ComponentData:
     exist.
     """
 
-    reference: str = dataclasses.field(metadata={"csvnames": ["Ref", "Designator"], "type": str})
+    reference: str = dataclasses.field(metadata={"csvnames": ["Ref", "Reference", "Designator"], "type": str})
     """Reference designator of component"""
     value: str = dataclasses.field(metadata={"csvnames": ["Val"], "type": str})
     """Symbol value of component"""
@@ -56,7 +56,7 @@ def parse_pnp(pnp_file_path: str) -> List[ComponentData]:
     if not os.path.exists(pnp_file_path):
         raise RuntimeError(f"Given PNP file: {pnp_file_path} does not exist!")
     for row in csvparser.parse(pnp_file_path):
-        data = csvparser.extract_data_from_row(row, ComponentData)
+        data = csvparser.extract_data_from_row(row, ComponentData, "PNP")
         pnp.append(data)
     return pnp
 
