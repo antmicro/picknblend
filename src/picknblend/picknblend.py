@@ -13,7 +13,7 @@ from os import path
 logger = logging.getLogger(__name__)
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     formatter = lambda prog: argparse.HelpFormatter(prog, max_help_position=35)
     parser = argparse.ArgumentParser(
         prog="picknblend",
@@ -55,7 +55,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def main():
+def main() -> int:
     try:
         args = parse_args()
         # Configure logger based on if we're debugging or not

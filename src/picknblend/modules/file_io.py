@@ -46,7 +46,6 @@ def read_pcb_name(path: str) -> str:
 
 def find_file_in_fab(suffix: str) -> Optional[str]:
     """Find a file in the fab directory that ends with the given suffix."""
-
     for file in os.listdir(config.fab_path):
         if file.endswith(suffix):
             return file

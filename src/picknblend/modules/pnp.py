@@ -3,7 +3,7 @@
 import dataclasses
 import os
 import logging
-from typing import List
+from typing import List, Dict
 import picknblend.modules.csvparser as csvparser
 
 logger = logging.getLogger(__name__)
@@ -29,17 +29,17 @@ class ComponentData:
 
     reference: str = dataclasses.field(metadata={"csvnames": ["Ref", "Reference", "Designator"], "type": str})
     """Reference designator of component"""
-    value: str = dataclasses.field(metadata={"csvnames": ["Val"], "type": str})
+    value: str = dataclasses.field(metadata={"csvnames": ["Val", "Comment"], "type": str})
     """Symbol value of component"""
     footprint: str = dataclasses.field(metadata={"csvnames": ["Package", "Footprint"], "type": str})
     """Footprint name of component"""
-    pos_x: float = dataclasses.field(metadata={"csvnames": ["PosX"], "type": float})
+    pos_x: float = dataclasses.field(metadata={"csvnames": ["PosX", "X"], "type": float})
     """X-axis position of component"""
-    pos_y: float = dataclasses.field(metadata={"csvnames": ["PosY"], "type": float})
+    pos_y: float = dataclasses.field(metadata={"csvnames": ["PosY", "Y"], "type": float})
     """Y-axis position of component"""
-    rot: float = dataclasses.field(metadata={"csvnames": ["Rot"], "type": float})
+    rot: float = dataclasses.field(metadata={"csvnames": ["Rot", "Rotation"], "type": float})
     """Rotation of component"""
-    side: str = dataclasses.field(metadata={"csvnames": ["Side"], "type": str})
+    side: str = dataclasses.field(metadata={"csvnames": ["Side", "Layer"], "type": str})
     """Side of PCB to place the component"""
 
 
@@ -73,8 +73,39 @@ def get_pnp_files(fab_path: str) -> List[ComponentData]:
         data = parse_pnp(file)
         pnp_list.extend(data)
 
-    sides = {"bottom": "B", "top": "T"}
+    """Top and bottom side header keywords"""
+    mapping_T = {"top", "Top", "TopLayer"}
+    mapping_B = {"bottom", "Bottom", "BottomLayer"}
+
     for comp in pnp_list:
-        if comp.side in sides:
-            comp.side = sides[comp.side]  # change value of side to single uppercase letter
+        if comp.side in mapping_B:
+            comp.side = "B"
+        elif comp.side in mapping_T:
+            comp.side = "T"
     return pnp_list
+
+
+def get_offset_file(fab_path: str, offset_file_name: str) -> Dict[str, ComponentData]:
+    """Read optional offset file from /fab directory, parse it and collect into dict.
+
+    In the dict, key is a <reference>-<footprint> if reference is given,
+    <footprint> otherwise.
+    Example, for CSV:
+    "Ref",  "Footprint"              ->   Key
+    "",     "QFN-16_3x3mm_P0.5mm"    ->   QFN-16_3x3mm_P0.5mm
+    "U2",   "QFN-16_3x3mm_P0.5mm"    ->   U2-QFN-16_3x3mm_P0.5mm
+    """
+    offset_data: Dict[str, ComponentData] = {}
+    if os.path.exists(fab_path + offset_file_name):
+        logger.info("Importing offset file data")
+        offset_file_path = fab_path + offset_file_name
+        logger.debug(f"Found offset file in: {offset_file_path}")
+        for row in csvparser.parse(offset_file_path):
+            data = csvparser.extract_data_from_row(row, ComponentData, file_type="OFFSET", empty_allowed=True)
+            if data.reference != "":
+                for ref in data.reference.split():
+                    data.reference = ref
+                    offset_data[ref + "-" + data.footprint] = data
+            else:
+                offset_data[data.footprint] = data
+    return offset_data

@@ -6,7 +6,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def load_model(blend: str):
+def load_model(blend: str) -> bpy.types.Object:
     """Load a component model from the given .blend file.
 
     Returns the newly created object."""
@@ -38,7 +38,7 @@ def load_model(blend: str):
     return bpy.context.selected_objects[0]
 
 
-def clean_annotations():
+def clean_annotations() -> None:
     """Clean all annotation collections that were created during model import."""
     collections_to_remove = []
     for coll in bpy.data.grease_pencils.keys():

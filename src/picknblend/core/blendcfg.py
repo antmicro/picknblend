@@ -5,7 +5,7 @@ import os.path
 from shutil import copyfile
 from typing import Any, Callable, Dict, Optional
 
-import hiyapyco
+import hiyapyco  # type: ignore
 import yaml
 
 logger = logging.getLogger(__name__)

@@ -28,7 +28,7 @@ def recalc_normals(obj: bpy.types.Object) -> None:
     bpy.ops.object.select_all(action="DESELECT")
 
 
-def create_collection(name: str, parent: bpy.types.Collection = None) -> Any:
+def create_collection(name: str, parent: bpy.types.Collection | None = None) -> Any:
     """Create and link objects to collection."""
     if not bpy.data.collections.get(name):
         newCol = bpy.data.collections.new(name)
@@ -58,7 +58,7 @@ def link_obj_to_collection(obj: bpy.types.Object, target_coll: bpy.types.Collect
     target_coll.objects.link(obj)
 
 
-def parent_collection_to_object(collection_name: str, parent):
+def parent_collection_to_object(collection_name: str, parent: bpy.types.Object) -> None:
     """Parent all child objects of the given collection to an object."""
     comp_col = bpy.data.collections.get(collection_name)
     for obj in comp_col.objects:
@@ -72,7 +72,7 @@ def parent_collection_to_object(collection_name: str, parent):
         bpy.ops.object.select_all(action="DESELECT")
 
 
-def save_pcb_blend(path: str, apply_transforms: bool = False):
+def save_pcb_blend(path: str, apply_transforms: bool = False) -> None:
     """Save the current model at the specified path."""
     if apply_transforms:
         for obj in bpy.context.scene.objects:
@@ -80,7 +80,7 @@ def save_pcb_blend(path: str, apply_transforms: bool = False):
     bpy.ops.wm.save_as_mainfile(filepath=path)
 
 
-def open_blendfile(blendfile):
+def open_blendfile(blendfile: str) -> None:
     """Open a given .blend file.
 
     Equivalent to file/open in GUI, will overwrite current file!

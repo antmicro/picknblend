@@ -17,7 +17,7 @@ def _find_models() -> Dict[str, str]:
 
     logger.warning("Discovering available models - this may take a while on large libraries!")
 
-    blend_models_list = {}
+    blend_models_list: dict[str, str] = {}
     directories_to_search = get_library_directories()
     for lib_path in directories_to_search:
         if not os.path.isdir(lib_path):
@@ -66,7 +66,7 @@ def _find_models() -> Dict[str, str]:
     return blend_models_list
 
 
-def find_library_by_model(modelpath: str):
+def find_library_by_model(modelpath: str) -> str:
     """Find the library to which a given model belongs to.
 
     Library here means the base directory from our configuration that
@@ -96,9 +96,9 @@ def get_library_directories() -> List[str]:
     config_directories = config.blendcfg["SETTINGS"]["MODEL_LIBRARY_PATHS"]
 
     # Split by ':' and filter out empty entries when a trailing ':' is present
-    optional_env_directories = os.environ.get("MODEL_LIBRARY_PATHS", "")
-    optional_env_directories = list(filter(len, optional_env_directories.split(":")))
-    directories_to_search = optional_env_directories + config_directories
+    optional_env_dirs = os.environ.get("MODEL_LIBRARY_PATHS", "")
+    optional_env_dirs_list = list(filter(len, optional_env_dirs.split(":")))
+    directories_to_search = optional_env_dirs_list + config_directories
 
     # Expand environment variables from each path (for example: $HOME)
     directories_to_search = [os.path.abspath(os.path.expandvars(lib_path)) for lib_path in directories_to_search]

@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Dict, cast
 from collections import defaultdict
 from math import radians, ceil
-from mathutils import Vector
+from mathutils import Vector, Euler
 import bpy
 import logging
 import picknblend.modules.custom_utilities as cu
@@ -11,7 +11,7 @@ import picknblend.modules.bom as bom
 import picknblend.modules.library as library
 import picknblend.modules.pnp as pnp
 import picknblend.modules.components as components
-
+import picknblend.modules.file_io as fio
 
 logger = logging.getLogger(__name__)
 
@@ -27,17 +27,19 @@ class ImporterData:
     marking_id_data: dict[str, str] = field(default_factory=dict)
     """BOM data (mapping of footprint -> ID)"""
     pnp_list: List[pnp.ComponentData] = field(default_factory=list)
-    """BOM data (mapping of footprint -> ID)"""
+    """PNP data"""
+    offset_data: Dict[str, pnp.ComponentData] = field(default_factory=dict)
+    """optional offset data to PNP input"""
 
     # Modified by the importer
 
     models_imported: list[str] = field(default_factory=list)
     """List of models that were imported (object names)."""
-    model_summary: defaultdict = field(default_factory=lambda: defaultdict(int))
+    model_summary: defaultdict[str, int] = field(default_factory=lambda: defaultdict(int))
     """Summary of imported models per-library."""
 
 
-def import_all_components(board_col, total_thickness):
+def import_all_components(board_col: bpy.types.Collection, board_thickness: float) -> None:
     """Import all components from PNP data and put them on the board."""
     if bpy.data.collections.get("Components"):
         logger.info("Components already imported.")
@@ -50,6 +52,9 @@ def import_all_components(board_col, total_thickness):
     importer.blend_models_list = library.get_available_models()
     importer.pnp_list = pnp.get_pnp_files(config.fab_path)
 
+    offset_file = fio.find_file_in_fab("offset.csv")
+    if offset_file is not None:
+        importer.offset_data = pnp.get_offset_file(config.fab_path, offset_file)
     main_col = bpy.data.collections.get(config.PCB_name)
     cu.create_collection("Components", main_col)
     if config.blendcfg["EFFECTS"]["SHOW_MECHANICAL"]:
@@ -59,7 +64,7 @@ def import_all_components(board_col, total_thickness):
     process_components_import(
         importer,
         board_col.objects[-1],
-        total_thickness,
+        board_thickness,
     )
 
     # cleanup after import
@@ -78,7 +83,7 @@ def import_all_components(board_col, total_thickness):
 def process_components_import(
     importer: ImporterData,
     pcb: bpy.types.Object,
-    total_thickness: float = 0,
+    board_thickness: float = 0,
 ) -> None:
     """Import components from parsed PNP files onto the specified PCB object."""
     for component in importer.pnp_list:
@@ -89,6 +94,25 @@ def process_components_import(
 
         pkg = component.footprint
         name = component.reference + ":" + component.value
+        # check and apply component's position offset from offset file
+        ref_pkg = f"{component.reference}-{pkg}"
+        offset_element = None
+
+        if ref_pkg in importer.offset_data:
+            offset_element = importer.offset_data[ref_pkg]
+            logger.debug(f"Use offset for designator {component.reference} with values: {offset_element}")
+        elif pkg in importer.offset_data:
+            offset_element = importer.offset_data[pkg]
+            logger.debug(f"Use offset for footprint {pkg} with values: {offset_element}")
+        if offset_element is not None:
+            component.pos_x += offset_element.pos_x
+            component.pos_y += offset_element.pos_y
+            component.rot += offset_element.rot
+            if offset_element.side == "flip":
+                component.side = "T" if component.side == "B" else "B"
+                component.pos_x *= -1
+
+        pos_z = 0 if component.side == "B" else board_thickness
         # check if markings used
         if config.blendcfg["EFFECTS"]["SHOW_MARKINGS"]:
             if component.reference not in importer.marking_id_data:
@@ -107,7 +131,6 @@ def process_components_import(
         lib = library.find_library_by_model(file_path)
         importer.model_summary[lib] += 1
 
-        pos_z = 0 if component.side == "B" else total_thickness
         import_comp(
             importer,
             pcb,
@@ -150,11 +173,10 @@ def create_component(importer: ImporterData, footprint: str) -> bpy.types.Object
         logger.debug(f"Imported new model for footprint: {obj_name} and moved to Temp collection")
 
         # Copy the component - this one will be actually placed on the board
-        return component.copy()
-    else:
-        logger.debug(f"Duplicated already imported model for footprint: {footprint}")
-        bpy.ops.object.select_all(action="DESELECT")
-        return bpy.data.objects[obj_name].copy()
+        return cast(bpy.types.Object, component.copy())
+    logger.debug(f"Duplicated already imported model for footprint: {footprint}")
+    bpy.ops.object.select_all(action="DESELECT")
+    return cast(bpy.types.Object, bpy.data.objects[obj_name].copy())
 
 
 def import_comp(
@@ -166,7 +188,7 @@ def import_comp(
     posy: float,
     side: str,
     deg: float,
-    total_thickness: float,
+    board_thickness: float,
     sub_model_pos: list[float] = [0, 0, 0],
     sub_model_rot: list[float] = [0, 0, 0],
 ) -> None:
@@ -180,11 +202,11 @@ def import_comp(
         logger.error("unknown side: " + str(side))
         return
 
-    posz = total_thickness
+    pos_z = board_thickness
     component = create_component(importer, footprint)
     component.name = name
 
-    if "PRIO" in component.keys():
+    if "PRIO" in component.keys():  # type: ignore
         if component["PRIO"]:
             comps = bpy.data.collections.get("Misc")
         else:
@@ -204,17 +226,17 @@ def import_comp(
                 # Apply submodel rotation
                 logger.debug(f"Submodel import position: [{sub_model_pos[0]}, {sub_model_pos[1]}, {sub_model_pos[2]}]")
                 logger.debug(f"Submodel import rotation: [{sub_model_rot[0]}, {sub_model_rot[1]}, {sub_model_rot[2]}]")
-                rotate = Vector(
+                rotate = Euler(
                     (
                         radians(sub_model_rot[0]),
                         radians(sub_model_rot[1]),
                         radians(sub_model_rot[2]),
                     )
-                )
+                )  # type: ignore
 
                 component.rotation_euler = rotate
                 # Apply submodel transformation
-                offset = Vector((sub_model_pos[0], sub_model_pos[1], sub_model_pos[2]))
+                offset = Vector((sub_model_pos[0], sub_model_pos[1], sub_model_pos[2]))  # type: ignore
                 component.location = offset
         except:
             logger.debug(f"Model {footprint} does not have PRIO custom property")
@@ -231,39 +253,39 @@ def import_comp(
         component["PCB_Side"] = "T"
         component.location = Vector(
             (
-                float(posx),
-                float(posy),
-                posz,
+                posx,
+                posy,
+                pos_z,
             )
-        )
-        component.rotation_euler = Vector((0, 0, radians(float(deg))))
+        )  # type: ignore
+        component.rotation_euler = Euler((0, 0, radians(float(deg))))  # type: ignore
 
     else:  # side == "B"
         component["PCB_Side"] = "B"
         component.location = Vector(
             (
-                -float(posx),
-                float(posy),
-                posz,
+                -posx,
+                posy,
+                pos_z,
             )
-        )
-        component.rotation_euler = Vector((radians(180), 0, radians(float(deg))))
+        )  # type: ignore
+        component.rotation_euler = Euler((radians(180), 0, radians(float(deg))))  # type: ignore
 
     bpy.ops.object.select_all(action="DESELECT")
 
-    component.location += Vector([-pcb.dimensions.x / 2, -pcb.dimensions.y / 2, 0])
+    component.location += Vector([-pcb.dimensions.x / 2, -pcb.dimensions.y / 2, 0])  # type: ignore
     cu.recalc_normals(component)
 
     # adding submodels for footprints with several 3D models
-    if config.blendcfg["EFFECTS"]["SHOW_MECHANICAL"] and "PRIO" in list(component.keys()):
-        logger.debug(f"'{name}' keys: {list(component.keys())}")
+    if config.blendcfg["EFFECTS"]["SHOW_MECHANICAL"] and "PRIO" in list(component.keys()):  # type: ignore
+        logger.debug(f"'{name}' keys: {list(component.keys())}")  # type: ignore
         logger.debug(f"PRIO value: {component['PRIO']}")
         if component["PRIO"] != 0:  # check only main models
             return
         sub_param_count = 4  # number of parameters which define sub-model
         main_param_count = 3  # number of parameters which define main model
-        substract_params = len(list(component.keys())) - main_param_count  # number of submodels parameters
-        if "cycles" in component.keys():
+        substract_params = len(list(component.keys())) - main_param_count  # type: ignore # number of submodels parameters
+        if "cycles" in component.keys():  # type: ignore
             substract_params -= 1  # omit unknown 'cycles' property not generated by us
         submodel_count = ceil(substract_params / sub_param_count)  # assumed number of submodels
         if submodel_count == 0:  # if no submodels
@@ -273,7 +295,7 @@ def import_comp(
         for j in range(1, submodel_count + 1):
             submodel_original_name = f"{str(j)}_MODEL_NAME"
             # get name of 3D submodel
-            if submodel_original_name not in component.keys():
+            if submodel_original_name not in component.keys():  # type: ignore
                 logger.debug("Missing data about submodels")
                 continue
             submodel_footprint = component[submodel_original_name]
@@ -290,7 +312,7 @@ def import_comp(
                 posy,
                 side,
                 deg,
-                total_thickness,
+                board_thickness,
                 submodel_pos,
                 submodel_rotate,
             )

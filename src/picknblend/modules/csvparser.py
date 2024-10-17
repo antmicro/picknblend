@@ -41,7 +41,7 @@ def parse(filepath: str) -> Generator[Dict[str, str], None, None]:
 T = TypeVar("T")
 
 
-def extract_data_from_row(csvrow: Dict[str, str], data_type: Type[T], file_type: str) -> T:
+def extract_data_from_row(csvrow: Dict[str, str], data_type: Type[T], file_type: str, empty_allowed: bool = False) -> T:
     """Extract data required by picknblend from a given CSV file row.
 
     The row is represented as a dictionary, where the key corresponds
@@ -67,9 +67,13 @@ def extract_data_from_row(csvrow: Dict[str, str], data_type: Type[T], file_type:
         value: None | str | float = None
         for colname in csvnames:
             if colname in csvrow:
-                value = field.type(csvrow[colname])
+                value_type = field.type
+                if callable(value_type):
+                    value = value_type(csvrow[colname])
+                else:
+                    value = None
 
-        if value is None:
+        if value is None and not empty_allowed:
             # Ignore missing column if the field has default value
             if field.default is not dataclasses.MISSING:
                 continue
