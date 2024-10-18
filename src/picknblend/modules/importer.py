@@ -116,10 +116,11 @@ def process_components_import(
         # check if markings used
         if config.blendcfg["EFFECTS"]["SHOW_MARKINGS"]:
             if component.reference not in importer.marking_id_data:
-                logger.warning(f"Footprint {pkg} for {component.reference} not found in BOM file. Ignoring marking")
+                logger.debug(f"Footprint {pkg} for {component.reference} not found in BOM file. Ignoring marking")
             elif f"{pkg}-{importer.marking_id_data[component.reference]}" in importer.blend_models_list:
                 ahid = importer.marking_id_data[component.reference]
                 pkg = f"{pkg}-{ahid}"
+                logger.info(f"Importing {name}: {pkg} with marking")
 
         # check if blend model exists
         if pkg not in importer.blend_models_list:
