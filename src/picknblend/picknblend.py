@@ -1,13 +1,12 @@
 import bpy
-import traceback
-import sys
 import argparse
 import logging
 import picknblend.modules.config as config
 import picknblend.modules.custom_utilities as cu
 import picknblend.modules.importer as importer
+import picknblend.core.blendcfg as blendcfg
 import picknblend.core.log as log
-from os import path
+from os import getcwd, path
 
 
 logger = logging.getLogger(__name__)
@@ -51,6 +50,12 @@ def parse_args() -> argparse.Namespace:
         type=str,
         default="default",
     )
+    parser.add_argument(
+        "-g",
+        "--get-config",
+        help="Copy blendcfg.yaml to CWD and exit",
+        action="store_true",
+    )
 
     return parser.parse_args()
 
@@ -81,6 +86,12 @@ def main() -> int:
             misc_col = bpy.data.collections.get("Misc")
             if misc_col is not None:
                 cu.remove_collection("Misc")
+
+        if args.get_config:
+            prj_path = getcwd() + "/"
+            pnb_dir_path = path.dirname(__file__)
+            blendcfg.check_and_copy_blendcfg(prj_path, pnb_dir_path, force=True)
+            return 0
 
         importer.import_all_components(board_col, pcb.dimensions.z)
         cu.save_pcb_blend(config.pcb_blend_path, apply_transforms=True)

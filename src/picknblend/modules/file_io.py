@@ -2,8 +2,9 @@ from os import listdir
 import logging
 import os
 from typing import Optional
-import picknblend.modules.config as config
 from pathlib import Path
+import picknblend.modules.config as config
+
 
 logger = logging.getLogger(__name__)
 

@@ -1,11 +1,9 @@
 import os
-import sys
-import glob
 import functools
-import picknblend.modules.config as config
 import logging
 import pathlib
 from typing import Dict, List
+import picknblend.modules.config as config
 
 
 logger = logging.getLogger(__name__)

@@ -1,11 +1,8 @@
 """Module containing custom utilities functions."""
 
 import bpy
-import bmesh
-import math
-from mathutils import Vector, kdtree
 import logging
-from typing import List, Tuple, Any
+from typing import Any
 
 logger = logging.getLogger(__name__)
 

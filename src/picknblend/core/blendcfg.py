@@ -4,9 +4,7 @@ import logging
 import os.path
 from shutil import copyfile
 from typing import Any, Callable, Dict, Optional
-
 import hiyapyco  # type: ignore
-import yaml
 
 logger = logging.getLogger(__name__)
 
@@ -44,10 +42,26 @@ class Field:
         self.optional = optional
 
 
-def check_and_copy_blendcfg(file_path: str, pnb_path: str) -> None:
+# Schema for blendcfg.yaml file
+CONFIGURATION_SCHEMA = {
+    "NAMING": {
+        "FAB_DIR": Field("string"),
+        "BOM_DIR": Field("string"),
+        "PROJECT_EXTENSION": Field("string"),
+        "MODEL_LIBRARY_PATHS": Field("list[str]"),
+    },
+    "EFFECTS": {
+        "SHOW_MECHANICAL": Field("bool"),
+        "SHOW_MARKINGS": Field("bool"),
+    },
+}
+
+
+def check_and_copy_blendcfg(file_path: str, pnb_path: str, force: bool = False) -> None:
     """Copy blendcfg to project's directory."""
-    if not os.path.exists(file_path + BLENDCFG_FILENAME):
-        logger.warning("Config file not found, copying default template")
+    if not os.path.exists(file_path + BLENDCFG_FILENAME) or force:
+        prompt = "enforced copy" if force else "no config found in working directory"
+        logger.warning(f"Copying default config from template ({prompt})")
         copyfile(pnb_path + "/templates/" + BLENDCFG_FILENAME, file_path + BLENDCFG_FILENAME)
 
 
@@ -73,7 +87,6 @@ def is_color_preset(arg: str | list[str] | None) -> bool:
     return False
 
 
-# parse color
 def hex_to_rgba(hex_number: str, alpha: bool = True) -> tuple[float, ...]:
     """Convert hex number to RGBA."""
     rgb = []
@@ -88,21 +101,6 @@ def hex_to_rgba(hex_number: str, alpha: bool = True) -> tuple[float, ...]:
 def parse_strings(arg: str) -> list[str]:
     """Parse string and split into separate values by comma separator."""
     return arg.replace(",", "").split()
-
-
-# Schema for blendcfg.yaml file
-CONFIGURATION_SCHEMA = {
-    "NAMING": {
-        "FAB_DIR": Field("string"),
-        "BOM_DIR": Field("string"),
-        "PROJECT_EXTENSION": Field("string"),
-        "MODEL_LIBRARY_PATHS": Field("list[str]"),
-    },
-    "EFFECTS": {
-        "SHOW_MECHANICAL": Field("bool"),
-        "SHOW_MARKINGS": Field("bool"),
-    },
-}
 
 
 def check_throw_error(cfg: Dict[str, Any], args: list[str], schema: Field) -> None:
