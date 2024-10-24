@@ -1,0 +1,95 @@
+stages:
+  - code-checks
+  - test
+  - build
+  - deploy
+
+image: $CI_DOCS_DOCKER_IMAGE
+
+type-correctness:
+  stage: code-checks
+  image: 'debian:bookworm'
+  allow_failure: true
+  script:
+    - apt update && apt -qqy install pip python3-poetry python3.11
+    - poetry add mypy fake-bpy-module-4.1==20240604
+    - poetry install
+    - poetry run mypy --install-types --non-interactive --disallow-untyped-defs src/
+
+code-formatting:
+  stage: code-checks
+  image: 'debian:bookworm'
+  allow_failure: true
+  script:
+    - apt update && apt -qqy install pip python3-poetry python3.11
+    - poetry add black
+    - poetry install
+    - poetry run black --check src/
+
+test:
+  stage: test
+  image: 'debian:bookworm'
+  before_script:
+    - export PATH=$HOME/.local/bin:$PATH
+    - mkdir -p logs
+    - echo 'deb http://deb.debian.org/debian bookworm-backports main' > /etc/apt/sources.list.d/backports.list
+    - apt-get -qqy update >> logs/debian_install.log
+    - apt-get -qqy update --fix-missing >> logs/debian_install.log
+    - apt update && apt -qqy install git pip python3-poetry gerbv inkscape python3.11 pipx >> logs/debian_install.log
+    - apt-get -qqy install -t bookworm-backports kicad >> logs/debian_install.log
+    - python3.11 -m pipx install 'git+https://github.com/antmicro/gerber2blend.git'
+    - python3.11 -m pipx install .
+    - python3.11 -m pip install 'git+https://github.com/antmicro/kicad-make.git' --break-system-packages
+    - git clone --quiet https://github.com/antmicro/environment-sensor.git
+    - git clone --quiet https://github.com/antmicro/hardware-components.git --depth=1
+  script:
+    - export PATH=$HOME/.local/bin:$PATH
+    - export MODEL_LIBRARY_PATHS=$PWD/hardware-components/
+    - cd environment-sensor
+    - mkdir fab
+    - kicad-cli pcb export gerbers --no-protel-ext -o fab/ environment-sensor.kicad_pcb
+    - kicad-cli pcb export drill --format gerber --excellon-separate-th -o fab/ environment-sensor.kicad_pcb
+    - kmake bom
+    - kmake bom --dnp
+    - kmake pnp
+    - gerber2blend
+    - picknblend
+  artifacts:
+    paths:
+      - environment-sensor/assets
+      - environment-sensor/doc
+      - environment-sensor/img
+      - environment-sensor/fab
+      - environment-sensor/*.kicad*
+      - environment-sensor/sym-lib-table
+      - environment-sensor/fp-lib-table
+      - environment-sensor/README.md
+      - environment-sensor/LICENSE
+      - environment-sensor/blendcfg.yaml
+
+docs-build:
+  stage: build
+  before_script:
+    - cd documentation/
+    - pip3 install -r requirements.txt
+    - pip3 install sphinxcontrib-mermaid
+  script:
+    - cd documentation/
+    - make html latexpdf
+    - cp build/latex/*.pdf build/html/
+    - tar cf ../$CI_DOCS_ARCHIVE -C build/html/ .
+  artifacts:
+    paths:
+      - build
+      - $CI_DOCS_ARCHIVE
+
+docs-deploy:
+  variables:
+    GIT_STRATEGY: none
+  dependencies:
+    - docs-build
+  stage: deploy
+  script: echo 'Deploying docs'
+  artifacts:
+    paths:
+      - $CI_DOCS_ARCHIVE
