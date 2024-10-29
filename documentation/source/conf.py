@@ -46,6 +46,7 @@ numfig = True
 # If you need to add extensions just add to those lists
 extensions = default_extensions
 extensions.append("sphinx_inline_tabs")
+extensions.append("sphinx.ext.mathjax")
 myst_enable_extensions = default_myst_enable_extensions
 
 myst_substitutions = {"project": project}
