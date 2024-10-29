@@ -19,7 +19,6 @@ jobs:
             submodules: false
         - name: Install dependencies
           run: |
-            sudo apt-get install libjs-mathjax
             pip install -r documentation/requirements.txt
         - name: Build docs and static demo
           run: |
