@@ -51,7 +51,8 @@ def parse_markings(bom_path: str) -> Dict[str, str]:
 
         for row in csvparser.parse(bom_path):
             data = csvparser.extract_data_from_row(row, BomData, "BOM")
-            marking_id_data[data.reference] = convert_to_id(f"{data.manufacturer}-{data.mpn}")
+            for ref in data.reference.split():
+                marking_id_data[ref.strip(",")] = convert_to_id(f"{data.manufacturer}-{data.mpn}")
 
     logger.debug("Parsed marking data: %s", marking_id_data)
 
