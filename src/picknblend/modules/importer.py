@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List, Dict, cast
 from collections import defaultdict
-from math import radians, ceil
+from math import radians
 from mathutils import Vector, Euler
 import bpy
 import logging
@@ -150,7 +150,7 @@ def process_components_import(
         cu.parent_collection_to_object("Misc", pcb)
 
 
-def create_component(importer: ImporterData, footprint: str) -> bpy.types.Object:
+def create_component(importer: ImporterData, footprint: str) -> bpy.types.Object | None:
     """Create a component object for the given footprint.
 
     If no components of this footprint were previously loaded, the model
@@ -164,6 +164,8 @@ def create_component(importer: ImporterData, footprint: str) -> bpy.types.Object
             raise RuntimeError(f"Cannot create component for footprint {footprint}: no model available in library!")
         blendpath = importer.blend_models_list[footprint]
         component = components.load_model(blendpath)
+        if component is None:
+            return None
 
         # Name the component based on shortened footprint name
         # This is used to later be able to duplicate already imported models.
@@ -206,6 +208,8 @@ def import_comp(
 
     pos_z = board_thickness
     component = create_component(importer, footprint)
+    if component is None:
+        return
     component.name = name
 
     if "PRIO" in component.keys():  # type: ignore
@@ -238,8 +242,8 @@ def import_comp(
                 component.rotation_euler = rotate
                 offset = Vector((sub_model_pos[0], sub_model_pos[1], sub_model_pos[2]))  # type: ignore
                 component.location = offset
-        except:
-            logger.debug(f"Model {footprint} does not have PRIO custom property")
+        except Exception as e:
+            logger.debug(f"Model {footprint} does not have PRIO custom property. {e}")
 
     bpy.ops.object.transform_apply(
         location=True,
@@ -308,6 +312,7 @@ def import_comp(
 
 
 def parse_submodel_properties(component: bpy.types.Object) -> Dict[str, Dict[str, List[float]]]:
+    """Parse object's custom properties in search of sub-models' definition."""
     pattern = r"^\d+_(.*)_(ROTATE|POS|MODEL_NAME)$"
     submodel_data: dict[str, dict[str, List[float]]] = {}
     for key, value in component.items():  # type: ignore

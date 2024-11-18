@@ -6,20 +6,33 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def load_model(blend: str) -> bpy.types.Object:
+def load_model(blend: str) -> bpy.types.Object | None:
     """Load a component model from the given .blend file.
 
-    Returns the newly created object."""
+    Returns the newly created object.
+    """
     if not os.path.exists(blend):
         raise RuntimeError(f"Cannot load .blend file: {blend}, as it does not exist on the filesystem!")
 
+    check_result = False
+    with bpy.data.libraries.load(blend) as (data_from, data_to):
+        collections_count = len(data_from.collections)
+        match collections_count:
+            case collections_count if collections_count > 1:
+                logger.warning(f"Model {blend} has too many collections. It will be omitted.")
+                check_result = True
+            case 0:
+                logger.warning(f"Model {blend} has no collections in it. It will be omitted.")
+                check_result = True
+    if check_result is True:
+        return None
+    collection_name = data_from.collections[0]
     try:
         bpy.ops.wm.append(
-            filename="Collection",
+            filename=collection_name,
             instance_collections=False,
             directory=f"{blend}/Collection",
         )
-        bpy.data.libraries.load(blend)
     except Exception as e:
         logger.error("Failed loading model from %s: %s", blend, str(e))
         raise
