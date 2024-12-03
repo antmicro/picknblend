@@ -1,10 +1,10 @@
 # picknblend
 
-Copyright (c) 2022-2024 Antmicro
+Copyright (c) 2022-2024 [Antmicro](https://www.antmicro.com)
 
 ![](img/picknblend-vis.png)
 
-`picknblend` is an open-source utility dedicated to populating 3D models of Printed Circuit Boards (PCBs) with 3D electrical components in Blender (.blend) format.
+This tool is an open-source utility dedicated to populating 3D models of Printed Circuit Boards (PCBs) with 3D electrical components in Blender (.blend) format.
 The tool uses .csv Pick and Place input position files that are used for placing components in proper positions.
 This makes the PCB with components visualization independent from the software used for designing it.
 Currently `picknblend` supports Blender 4.1+.
