@@ -5,6 +5,7 @@ import os.path
 from shutil import copyfile
 from typing import Any, Callable, Dict, Optional
 import hiyapyco  # type: ignore
+import yaml
 
 logger = logging.getLogger(__name__)
 
@@ -59,10 +60,21 @@ CONFIGURATION_SCHEMA = {
 
 def check_and_copy_blendcfg(file_path: str, pnb_path: str, force: bool = False) -> None:
     """Copy blendcfg to project's directory."""
-    if not os.path.exists(file_path + BLENDCFG_FILENAME) or force:
-        prompt = "enforced copy" if force else "no config found in working directory"
-        logger.warning(f"Copying default config from template ({prompt})")
-        copyfile(pnb_path + "/templates/" + BLENDCFG_FILENAME, file_path + BLENDCFG_FILENAME)
+    project_cfg = file_path + "/" + BLENDCFG_FILENAME
+    template_path = pnb_path + "/templates/" + BLENDCFG_FILENAME
+    if not os.path.exists(project_cfg):
+        prompt = "no config found in working directory"
+        copyfile(template_path, project_cfg)
+    else:
+        if force:
+            prompt = "overwrite existing config"
+            cfg = hiyapyco.load([project_cfg, template_path], method=hiyapyco.METHOD_MERGE)
+        else:
+            prompt = "append to existing config"
+            cfg = hiyapyco.load([template_path, project_cfg], method=hiyapyco.METHOD_MERGE)
+        with open(project_cfg, "w") as file:
+            yaml.dump(cfg, file)
+    logger.warning(f"Copied default config from template ({prompt})")
 
 
 def is_color(arg: str | None) -> bool:
@@ -229,11 +241,10 @@ def check_and_parse_blendcfg(cfg: Dict[str, Any]) -> Dict[str, Any]:
     return cfg
 
 
-def open_blendcfg(path: str, config_preset: str, pnb_path: str) -> Dict[str, Any]:
+def open_blendcfg(file_path: str, config_preset: str, pnb_path: str) -> Dict[str, Any]:
     """Open configuration file from the specified path."""
-    cfg_path = path + "/" + BLENDCFG_FILENAME
-    template_path = pnb_path + "/templates/" + BLENDCFG_FILENAME
-    config = hiyapyco.load([template_path, cfg_path], method=hiyapyco.METHOD_MERGE)
-    if config_preset not in config:
-        raise RuntimeError(f"Unknown blendcfg preset: {config_preset}")
-    return check_and_parse_blendcfg(config[config_preset])
+    with open(file_path + BLENDCFG_FILENAME, "r") as bcfg:
+        cfg = yaml.safe_load(bcfg)
+        if config_preset not in cfg:
+            raise RuntimeError(f"Unknown blendcfg preset: {config_preset}")
+        return check_and_parse_blendcfg(cfg[config_preset])

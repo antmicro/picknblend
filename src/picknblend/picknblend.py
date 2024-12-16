@@ -65,6 +65,13 @@ def main() -> int:
         args = parse_args()
         # Configure logger based on if we're debugging or not
         log.set_logging(args.debug)
+
+        if args.get_config:
+            prj_path = getcwd() + "/"
+            pnb_dir_path = path.dirname(__file__)
+            blendcfg.check_and_copy_blendcfg(prj_path, pnb_dir_path, force=True)
+            return 0
+
         # Initialize global data
         config.init_global(args)
 
@@ -86,12 +93,6 @@ def main() -> int:
             misc_col = bpy.data.collections.get("Misc")
             if misc_col is not None:
                 cu.remove_collection("Misc")
-
-        if args.get_config:
-            prj_path = getcwd() + "/"
-            pnb_dir_path = path.dirname(__file__)
-            blendcfg.check_and_copy_blendcfg(prj_path, pnb_dir_path, force=True)
-            return 0
 
         importer.import_all_components(board_col, pcb.dimensions.z)
         cu.save_pcb_blend(config.pcb_blend_path, apply_transforms=True)
