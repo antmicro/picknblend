@@ -1,6 +1,6 @@
 # picknblend
 
-Copyright (c) 2022-2024 [Antmicro](https://www.antmicro.com)
+Copyright (c) 2022-2025 [Antmicro](https://www.antmicro.com)
 
 ![](img/picknblend-vis.png)
 
