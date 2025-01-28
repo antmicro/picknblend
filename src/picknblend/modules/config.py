@@ -19,8 +19,8 @@ pnb_dir_path: str = ""
 args: argparse.Namespace
 
 
-def init_global(arguments: argparse.Namespace) -> None:
-    """Initialize global variables used across modules.
+def init_global(arguments: argparse.Namespace) -> int:
+    """Process config and initialize global variables used across modules.
 
     Args:
     ----
@@ -35,14 +35,31 @@ def init_global(arguments: argparse.Namespace) -> None:
     prj_path = getcwd() + "/"
     pnb_dir_path = path.dirname(__file__) + "/.."
 
-    # Create blendcfg if it does not exist
-    bcfg.check_and_copy_blendcfg(prj_path, pnb_dir_path)
-    # Read blendcfg file
-    blendcfg = bcfg.open_blendcfg(prj_path, arguments.config_preset, pnb_dir_path)
+    # Handle blendcfg when argument switch is used and end script
+    if arguments.reset_config:
+        handle_config(overwrite=True)
+        return 0
+    if arguments.update_config:
+        handle_config()
+        return 0
+
+    # Handle blendcfg when no argument is passed and proceed with script
+    handle_config()
+
+    blendcfg = bcfg.open_blendcfg(prj_path, arguments.config_preset)
 
     configure_paths(arguments)
 
     args = arguments
+    return 1
+
+
+def handle_config(overwrite: bool = False) -> None:
+    """Determine if config should be copied or merged, applies overwrite mode if enabled in arguments."""
+    if not path.exists(path.join(prj_path, bcfg.BLENDCFG_FILENAME)):
+        bcfg.copy_blendcfg(prj_path, pnb_dir_path)
+    else:
+        bcfg.merge_blendcfg(prj_path, pnb_dir_path, overwrite=overwrite)
 
 
 def configure_paths(arguments: argparse.Namespace) -> None:

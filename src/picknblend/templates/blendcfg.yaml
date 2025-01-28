@@ -1,5 +1,5 @@
-default: &default
-  SETTINGS:
+default: 
+  SETTINGS: 
     FAB_DIR: fab                    # default directory name containing fabrication files
     BOM_DIR: doc                    # default directory name containing BOM file
     PRJ_EXTENSION: .kicad_pro       # default extension of project based on which the name of the blend is generated

@@ -31,7 +31,7 @@ Enables additional import effects:
 The current template file contains a single, default preset. You can add a new preset and save it in the `blendcfg.yaml` template file as follows:
 
 ```yaml
-default: &default
+default:
     SETTINGS:
         FAB_DIR: fab
         BOM_DIR: doc
@@ -39,11 +39,9 @@ default: &default
 ...
 
 custom_preset:
-    <<: *default
     SETTINGS:
         FAB_DIR: fabrication_dir
         BOM_DIR: bom_dir
-...
 ```
 
 In `blendcfg.yaml` presets, only the fields that are modified need to be included in a new preset.

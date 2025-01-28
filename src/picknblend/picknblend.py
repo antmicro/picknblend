@@ -51,9 +51,15 @@ def parse_args() -> argparse.Namespace:
         default="default",
     )
     parser.add_argument(
-        "-g",
-        "--get-config",
-        help="Copy blendcfg.yaml to CWD and exit",
+        "-R",
+        "--reset-config",
+        help="Reset local config settings to the values from the template and exit. Copy blendcfg.yaml to CWD instead if there is no CWD config file found.",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-u",
+        "--update-config",
+        help="Update local config settings with the additional ones found in the template and exit. Copy blendcfg.yaml to CWD instead if there is no CWD config file found.",
         action="store_true",
     )
 
@@ -66,36 +72,29 @@ def main() -> int:
         # Configure logger based on if we're debugging or not
         log.set_logging(args.debug)
 
-        if args.get_config:
-            prj_path = getcwd() + "/"
-            pnb_dir_path = path.dirname(__file__)
-            blendcfg.check_and_copy_blendcfg(prj_path, pnb_dir_path, force=True)
-            return 0
-
         # Initialize global data
-        config.init_global(args)
+        if config.init_global(args):
+            cu.open_blendfile(config.pcb_blend_path)
+            if "Board" not in bpy.data.collections:
+                logger.error("Loaded model does not have the required Board collection!")
+                return 1
+            if config.PCB_name not in bpy.data.objects:
+                logger.error("Loaded model does not have a PCB object named %s!", config.PCB_name)
+                return 1
 
-        cu.open_blendfile(config.pcb_blend_path)
-        if "Board" not in bpy.data.collections:
-            logger.error("Loaded model does not have the required Board collection!")
-            return 1
-        if config.PCB_name not in bpy.data.objects:
-            logger.error("Loaded model does not have a PCB object named %s!", config.PCB_name)
-            return 1
+            logger.info("Recognized PCB model")
+            pcb = bpy.data.objects[config.PCB_name]
+            board_col = bpy.data.collections.get("Board")
 
-        logger.info("Recognized PCB model")
-        pcb = bpy.data.objects[config.PCB_name]
-        board_col = bpy.data.collections.get("Board")
+            if args.regenerate:
+                logger.info("Removing 'Components' collection")
+                cu.remove_collection("Components")
+                misc_col = bpy.data.collections.get("Misc")
+                if misc_col is not None:
+                    cu.remove_collection("Misc")
 
-        if args.regenerate:
-            logger.info("Removing 'Components' collection")
-            cu.remove_collection("Components")
-            misc_col = bpy.data.collections.get("Misc")
-            if misc_col is not None:
-                cu.remove_collection("Misc")
-
-        importer.import_all_components(board_col, pcb.dimensions.z)
-        cu.save_pcb_blend(config.pcb_blend_path, apply_transforms=True)
+            importer.import_all_components(board_col, pcb.dimensions.z)
+            cu.save_pcb_blend(config.pcb_blend_path, apply_transforms=True)
 
     except Exception as e:
         logger.error("%s", str(e), exc_info=True)
