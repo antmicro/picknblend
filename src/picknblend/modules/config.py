@@ -5,6 +5,7 @@ import os
 from os import getcwd, path
 from typing import Dict, Any
 import picknblend.core.blendcfg as bcfg
+import picknblend.core.schema as sch
 import picknblend.modules.file_io as fio
 
 
@@ -46,7 +47,9 @@ def init_global(arguments: argparse.Namespace) -> int:
     # Handle blendcfg when no argument is passed and proceed with script
     handle_config()
 
-    blendcfg = bcfg.open_blendcfg(prj_path, arguments.config_preset)
+    schema = sch.ConfigurationSchema()
+    blendcfgs = bcfg.open_blendcfg(prj_path, arguments.config_preset)
+    blendcfg = bcfg.validate_blendcfg(blendcfgs, schema)
 
     configure_paths(arguments)
 

@@ -96,6 +96,9 @@ def main() -> int:
             importer.import_all_components(board_col, pcb.dimensions.z)
             cu.save_pcb_blend(config.pcb_blend_path, apply_transforms=True)
 
+    except blendcfg.BlendcfgValidationError as e:
+        logger.error("%s", str(e), exc_info=False)
+        return 1
     except Exception as e:
         logger.error("%s", str(e), exc_info=True)
         return 1
