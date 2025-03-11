@@ -94,7 +94,8 @@ def main() -> int:
                     cu.remove_collection("Misc")
 
             importer.import_all_components(board_col, pcb.dimensions.z)
-            cu.save_pcb_blend(config.pcb_blend_path, apply_transforms=True)
+
+            cu.save_pcb_blend(config.pcb_blend_path, apply_transforms=config.blendcfg["SETTINGS"]["APPLY_TRANSFORMS"])
 
     except blendcfg.BlendcfgValidationError as e:
         logger.error("%s", str(e), exc_info=False)

@@ -6,6 +6,7 @@ default:
     MODEL_LIBRARY_PATHS:            # default paths to model library folders, can be overridden by MODEL_LIBRARY_PATHS
       - $HOME/.local/share/antmicro-blender-models/
       - $HOME/.local/share/antmicro-hardware-components/
+    APPLY_TRANSFORMS: True          # if True, transforms will be applied to all components
 
   EFFECTS:
     SHOW_MECHANICAL: False          # imports additional components like plugs

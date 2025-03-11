@@ -38,6 +38,7 @@ class SettingsSchema(BaseSchema):
     FAB_DIR = fields.String()
     BOM_DIR = fields.String()
     MODEL_LIBRARY_PATHS = fields.List(fields.String())
+    APPLY_TRANSFORMS = fields.Bool()
 
 
 class EffectsSchema(BaseSchema):
