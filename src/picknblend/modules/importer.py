@@ -69,7 +69,7 @@ def import_all_components(board_col: bpy.types.Collection, board_thickness: floa
     )
 
     # cleanup after import
-    cu.remove_collection("Temp")
+    cu.remove_collection(["Temp"])
     remove_duplicated_materials()
 
     logger.info("Component blender models summary:")

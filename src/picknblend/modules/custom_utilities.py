@@ -2,7 +2,7 @@
 
 import bpy
 import logging
-from typing import Any
+from typing import Any, List
 
 logger = logging.getLogger(__name__)
 
@@ -36,16 +36,45 @@ def create_collection(name: str, parent: bpy.types.Collection | None = None) -> 
     return bpy.data.collections.get(name)
 
 
-def remove_collection(name: str) -> None:
-    """Remove collection."""
-    remCol = bpy.data.collections.get(name)
-    if remCol is None:
-        logger.debug(f"Did not find '{name}' collection to remove. Continue")
-        return
-    logger.debug(f"Found '{name}' collection. Removing its objects and whole collection.")
-    for obj in remCol.objects:
-        bpy.data.objects.remove(obj)
-    bpy.data.collections.remove(remCol)
+def remove_collection(collections: List[str]) -> None:
+    """Remove list of collections."""
+    for col in collections:
+        rem_col = bpy.data.collections.get(col)
+        if rem_col is None:
+            logger.debug(f"Did not find '{col}' collection to remove. Continue")
+            continue
+        logger.debug(f"Found '{col}' collection. Removing its objects and whole collection.")
+        for obj in rem_col.objects:
+            bpy.data.objects.remove(obj)
+        bpy.data.collections.remove(rem_col)
+
+
+def clear_obsolete_data() -> None:
+    """Remove obsolete data."""
+    clear_unused_meshes()
+    clear_unused_materials()
+    remove_empty_collections()
+
+
+def clear_unused_meshes() -> None:
+    """Remove unused meshes from file."""
+    for mesh in bpy.data.meshes:
+        if mesh.users == 0:
+            bpy.data.meshes.remove(mesh)
+
+
+def clear_unused_materials() -> None:
+    """Remove unused materials from file."""
+    for mat in bpy.data.materials:
+        if mat.users == 0 or mat.name == "Dots Stroke":
+            bpy.data.materials.remove(mat)
+
+
+def remove_empty_collections() -> None:
+    """Remove all collections with no children."""
+    for col in bpy.data.collections:
+        if not col.all_objects:
+            bpy.data.collections.remove(col)
 
 
 def link_obj_to_collection(obj: bpy.types.Object, target_coll: bpy.types.Collection) -> None:

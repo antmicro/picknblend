@@ -88,13 +88,10 @@ def main() -> int:
 
             if args.regenerate:
                 logger.info("Removing 'Components' collection")
-                cu.remove_collection("Components")
-                misc_col = bpy.data.collections.get("Misc")
-                if misc_col is not None:
-                    cu.remove_collection("Misc")
+                cu.remove_collection(["Components", "Misc"])
 
             importer.import_all_components(board_col, pcb.dimensions.z)
-
+            cu.clear_obsolete_data()
             cu.save_pcb_blend(config.pcb_blend_path, apply_transforms=config.blendcfg["SETTINGS"]["APPLY_TRANSFORMS"])
 
     except blendcfg.BlendcfgValidationError as e:
