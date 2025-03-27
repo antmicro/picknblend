@@ -29,8 +29,8 @@ class ImporterData:
     """BOM data (mapping of footprint -> ID)"""
     pnp_list: List[pnp.ComponentData] = field(default_factory=list)
     """PNP data"""
-    offset_data: Dict[str, pnp.ComponentData] = field(default_factory=dict)
-    """optional offset data to PNP input"""
+    override_data: Dict[str, pnp.ComponentData] = field(default_factory=dict)
+    """optional override data to PNP input"""
 
     # Modified by the importer
 
@@ -53,9 +53,9 @@ def import_all_components(board_col: bpy.types.Collection, board_thickness: floa
     importer.blend_models_list = library.get_available_models()
     importer.pnp_list = pnp.get_pnp_files(config.fab_path)
 
-    offset_file = fio.find_file_in_fab("offset.csv")
-    if offset_file is not None:
-        importer.offset_data = pnp.get_offset_file(config.fab_path, offset_file)
+    override_file = fio.find_file_in_fab("override.csv")
+    if override_file is not None:
+        importer.override_data = pnp.get_override_file(config.fab_path, override_file)
     main_col = bpy.data.collections.get(config.PCB_name)
     cu.create_collection("Components", main_col)
     if config.blendcfg["EFFECTS"]["SHOW_MECHANICAL"]:
@@ -95,21 +95,23 @@ def process_components_import(
 
         pkg = component.footprint
         name = component.reference + ":" + component.value
-        # check and apply component's position offset from offset file
+        # check and apply component's position and name override from override file
         ref_pkg = f"{component.reference}-{pkg}"
-        offset_element = None
+        override_element = None
 
-        if ref_pkg in importer.offset_data:
-            offset_element = importer.offset_data[ref_pkg]
-            logger.debug(f"Use offset for designator {component.reference} with values: {offset_element}")
-        elif pkg in importer.offset_data:
-            offset_element = importer.offset_data[pkg]
-            logger.debug(f"Use offset for footprint {pkg} with values: {offset_element}")
-        if offset_element is not None:
-            component.pos_x += offset_element.pos_x
-            component.pos_y += offset_element.pos_y
-            component.rot += offset_element.rot
-            if offset_element.side == "flip":
+        if ref_pkg in importer.override_data:
+            override_element = importer.override_data[ref_pkg]
+            logger.debug(f"Using override for designator {component.reference} with values: {override_element}")
+        elif pkg in importer.override_data:
+            override_element = importer.override_data[pkg]
+            logger.debug(f"Using override for footprint {pkg} with values: {override_element}")
+        if override_element:
+            component.pos_x += override_element.pos_x
+            component.pos_y += override_element.pos_y
+            component.rot += override_element.rot
+            if override_element.override != "":
+                pkg = override_element.override
+            if override_element.side == "flip":
                 component.side = "T" if component.side == "B" else "B"
                 component.pos_x *= -1
 

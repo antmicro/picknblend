@@ -110,19 +110,22 @@ The order of columns in the BOM file is not relevant and additional columns in t
 In order to generate a BOM file in KiCad, follow the [KiCad documentation](https://docs.kicad.org/7.0/en/eeschema/eeschema_generating_outputs.html#bom-export) with a default `bom_csv_grouped_by_value` generator script.
 Then adjust the file to the requirements mentioned above.
 
-### PnP offset file
+### PnP override file
 
-The PnP offset file allows you to define position adjustments for component models on the PCB when importing PNP data exported from EDA software.
-This file should be placed in the same directory as the PnP files and `picknblend` will automatically recognize it if its name ends with the `offset.csv` suffix.
-The offset file must follow the same column structure as the PnP file.
+The PnP override file allows you to define footprint names and position adjustments for component models on the PCB when importing PNP data exported from EDA software.
+This file should be placed in the same directory as the PnP files and `picknblend` will automatically recognize it if its name ends with the `override.csv` suffix.
+The override file must follow the same column structure as the PnP file.
+For specifying footprint name override, add new column `Override`. 
 
-Guidelines for preparing the offset file:
+Guidelines for preparing the override file:
 
-* Offsets can be applied to individual components by listing their reference designators in the `Ref` column (separated by spaces if more than one).
-* Leaving the `Ref` column empty will apply the offset to all components with the specified footprint.
-* If no offset is required for a footprint, it can be omitted from the file.
-* Define offsets in the `PosX`, `PosY`, and `Rotation` columns with the required values or use 0 for columns that don't need adjustment.
-* To move a component to the opposite side of the PCB, set the `Side` column to `flip` or leave it empty if no change is needed.
+* Overrides can be applied to individual components by listing their reference designators in the `Ref` column (separated by spaces if more than one).
+* Leaving the `Ref` column empty will apply the override to all components with the specified footprint name.
+* If no override is required for a footprint, it can be omitted from the file.
+* To override footprint name, specify new name in `Override` column.
+* New footprint name will be also applied when searching for a model with marking.
+* Define position overrides in the `PosX`, `PosY`, and `Rotation` columns with the required values or leave cells empty for values that don't need adjustment.
+* To move a component to the opposite side of the PCB, in the `Side` column set `flip` or leave it empty if no change is needed.
 
 ## Importing submodels
 

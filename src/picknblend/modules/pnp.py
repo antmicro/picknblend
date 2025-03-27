@@ -41,6 +41,8 @@ class ComponentData:
     """Rotation of component"""
     side: str = dataclasses.field(metadata={"csvnames": ["Side", "Layer"], "type": str})
     """Side of PCB to place the component"""
+    override: str = dataclasses.field(metadata={"csvnames": ["Override"], "type": str}, default="")
+    """Override footprint name of component"""
 
 
 def parse_pnp(pnp_file_path: str) -> List[ComponentData]:
@@ -85,27 +87,33 @@ def get_pnp_files(fab_path: str) -> List[ComponentData]:
     return pnp_list
 
 
-def get_offset_file(fab_path: str, offset_file_name: str) -> Dict[str, ComponentData]:
-    """Read optional offset file from /fab directory, parse it and collect into dict.
+def get_override_file(fab_path: str, override_file_name: str) -> Dict[str, ComponentData]:
+    """Read optional override file from /fab directory, parse it and collect into dict.
 
     In the dict, key is a <reference>-<footprint> if reference is given,
     <footprint> otherwise.
+    If footprint name override is specified, the key will be <reference>-<override> or <override> respectively.
     Example, for CSV:
-    "Ref",  "Footprint"              ->   Key
-    "",     "QFN-16_3x3mm_P0.5mm"    ->   QFN-16_3x3mm_P0.5mm
-    "U2",   "QFN-16_3x3mm_P0.5mm"    ->   U2-QFN-16_3x3mm_P0.5mm
+    "Ref",  "Footprint", "Override"                             ->   Key
+    "",     "QFN-16_3.0x3.0mm_P0.5mm","QFN-QFN-16_3x3mm_P0.5mm" ->   QFN-16_3x3mm_P0.5mm
+    "U2",   "QFN-16_3x3mm_P0.5mm",                              ->   U2-QFN-16_3.0x3.0mm_P0.5mm
     """
-    offset_data: Dict[str, ComponentData] = {}
-    if os.path.exists(fab_path + offset_file_name):
-        logger.info("Importing offset file data")
-        offset_file_path = fab_path + offset_file_name
-        logger.debug(f"Found offset file in: {offset_file_path}")
-        for row in csvparser.parse(offset_file_path):
-            data = csvparser.extract_data_from_row(row, ComponentData, file_type="OFFSET", empty_allowed=True)
-            if data.reference != "":
-                for ref in data.reference.split():
-                    data.reference = ref
-                    offset_data[ref + "-" + data.footprint] = data
-            else:
-                offset_data[data.footprint] = data
-    return offset_data
+    override_data: Dict[str, ComponentData] = {}
+    override_file_path = fab_path + override_file_name
+    if not os.path.exists(override_file_path):
+        logger.debug(f"Override file not found in: {override_file_name}")
+        return override_data
+    logger.debug(f"Parsing found override file: {override_file_name}")
+    for row in csvparser.parse(override_file_path):
+        logger.debug(f"Parsing override row: {row}")
+        data = csvparser.extract_data_from_row(row, ComponentData, file_type="OVERRIDE", empty_allowed=True)
+        if data.footprint == "":  # if input footprint name not specified, omit
+            logger.warning(f"Empty input footprint name in {data}. It will be omitted.")
+            continue
+        if data.reference != "":
+            for ref in data.reference.split():
+                data.reference = ref
+                override_data[f"{ref}-{data.footprint}"] = data
+        else:
+            override_data[data.footprint] = data
+    return override_data
