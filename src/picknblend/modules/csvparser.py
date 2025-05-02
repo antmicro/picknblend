@@ -69,7 +69,7 @@ def extract_data_from_row(csvrow: Dict[str, str], data_type: Type[T], file_type:
             if colname in csvrow:
                 value_type = field.type
                 if callable(value_type):
-                    if isinstance(field, float) and csvrow[colname] == "":
+                    if value_type is float and csvrow[colname] == "":
                         csvrow[colname] = "0"
                     value = value_type(csvrow[colname])
                 else:

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List, Dict, cast
+from typing import List, Dict, cast, Optional
 from collections import defaultdict
 from math import radians
 from mathutils import Vector, Euler
@@ -90,6 +90,7 @@ def process_components_import(
     for component in importer.pnp_list:
         importer.model_summary["total_models"] += 1
         ref_prefix = component.reference.strip("0123456789")
+
         if not config.blendcfg["EFFECTS"]["SHOW_MECHANICAL"] and ref_prefix == "A":
             continue
 
@@ -98,18 +99,12 @@ def process_components_import(
         # check and apply component's position and name override from override file
         ref_pkg = f"{component.reference}-{pkg}"
         override_element = None
-
-        if ref_pkg in importer.override_data:
-            override_element = importer.override_data[ref_pkg]
+        if override_element := importer.override_data.get(ref_pkg):
             logger.debug(f"Using override for designator {component.reference} with values: {override_element}")
-        elif pkg in importer.override_data:
-            override_element = importer.override_data[pkg]
+        elif override_element := importer.override_data.get(pkg):
             logger.debug(f"Using override for footprint {pkg} with values: {override_element}")
         if override_element:
-            component.pos_x += override_element.pos_x
-            component.pos_y += override_element.pos_y
-            component.rot += override_element.rot
-            if override_element.override != "":
+            if override_element.override and not "":
                 pkg = override_element.override
             if override_element.side == "flip":
                 component.side = "T" if component.side == "B" else "B"
@@ -145,6 +140,7 @@ def process_components_import(
             component.side,
             component.rot,
             pos_z,
+            override_element,
         )
 
     cu.parent_collection_to_object("Components", pcb)
@@ -166,9 +162,8 @@ def create_component(importer: ImporterData, footprint: str) -> bpy.types.Object
             raise RuntimeError(f"Cannot create component for footprint {footprint}: no model available in library!")
         blendpath = importer.blend_models_list[footprint]
         component = components.load_model(blendpath)
-        if component is None:
+        if not component:
             return None
-
         # Name the component based on shortened footprint name
         # This is used to later be able to duplicate already imported models.
         component.name = obj_name
@@ -195,6 +190,7 @@ def import_comp(
     side: str,
     deg: float,
     board_thickness: float,
+    override_element: Optional[pnp.ComponentData],
     sub_model_pos: List[float] = [0, 0, 0],
     sub_model_rot: List[float] = [0, 0, 0],
 ) -> None:
@@ -226,7 +222,17 @@ def import_comp(
     bpy.context.view_layer.objects.active = None
     component.select_set(True)
     bpy.ops.object.make_single_user(type="SELECTED_OBJECTS", object=True, obdata=True)
+    if override_element:
+        component.rotation_euler = Euler((0, 0, radians(float(override_element.rot))))  # type:ignore
+        component.location = Vector([override_element.pos_x, override_element.pos_y, 0])  # type:ignore
 
+        bpy.ops.object.transform_apply(
+            location=True,
+            rotation=True,
+            scale=False,
+            properties=False,
+            isolate_users=False,
+        )
     if config.blendcfg["EFFECTS"]["SHOW_MECHANICAL"]:
         try:
             if component["PRIO"] != 0:  # check only sub-models models
@@ -244,16 +250,15 @@ def import_comp(
                 component.rotation_euler = rotate
                 offset = Vector((sub_model_pos[0], sub_model_pos[1], sub_model_pos[2]))  # type: ignore
                 component.location = offset
+                bpy.ops.object.transform_apply(
+                    location=True,
+                    rotation=True,
+                    scale=False,
+                    properties=False,
+                    isolate_users=False,
+                )
         except Exception as e:
             logger.debug(f"Model {footprint} does not have PRIO custom property. {e}")
-
-    bpy.ops.object.transform_apply(
-        location=True,
-        rotation=True,
-        scale=False,
-        properties=False,
-        isolate_users=False,
-    )
 
     if side == "T":
         component["PCB_Side"] = "T"
@@ -308,8 +313,9 @@ def import_comp(
                 side,
                 deg,
                 board_thickness,
-                value["POS"],
-                value["ROTATE"],
+                override_element=None,
+                sub_model_pos=value["POS"],
+                sub_model_rot=value["ROTATE"],
             )
 
 

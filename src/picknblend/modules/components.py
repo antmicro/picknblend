@@ -2,7 +2,6 @@ import bpy
 import os
 import logging
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -40,6 +39,7 @@ def load_model(blend: str) -> bpy.types.Object | None:
     logger.debug(f"Imported model: {blend}")
 
     clean_annotations()
+
     bpy.ops.object.transform_apply(
         location=True,
         rotation=True,
@@ -48,6 +48,8 @@ def load_model(blend: str) -> bpy.types.Object | None:
         isolate_users=False,
     )
 
+    if not bpy.context.selected_objects:
+        return None
     return bpy.context.selected_objects[0]
 
 
