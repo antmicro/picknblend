@@ -76,4 +76,4 @@ In order to populate an already existing PCB model with components from PnP file
 picknblend
 ```
 
-To preview the generated `.blend` file with populated components, open it with an instance of Blender in version >=4.1.
+To preview the generated `.blend` file with populated components, open it with an instance of Blender in version 4.5+.

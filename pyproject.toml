@@ -29,7 +29,7 @@ picknblend = "picknblend.picknblend:main"
 [tool.poetry.dependencies]
 python = "3.11.*"
 wand = "^0.6.13"
-bpy = "4.4.0"
+bpy = "4.5.4"
 unidecode = "^1.3.8"
 ruamel-yaml = "==0.18.10"
 marshmallow = "^3.20.1"

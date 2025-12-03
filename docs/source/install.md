@@ -36,4 +36,4 @@ For developers, it is recommended to clone the repository and install picknblend
 ```
 
 This installs the required dependencies and installs `picknblend` into its own virtual environment.
-`picknblend` depends on the `bpy` package in version `4.1` to interact with Blender, which is currently only compatible with Python 3.11.
+`picknblend` depends on the `bpy` package in version `4.5.4` to interact with Blender, which is currently only compatible with Python 3.11.
