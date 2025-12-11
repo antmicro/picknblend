@@ -1,0 +1,684 @@
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="">
+    
+    
+      
+        <title>Usage - Picknblend Documentation</title>
+      
+    
+    
+      
+        
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+        <link rel="stylesheet" type="text/css" href="_static/sphinx_immaterial_theme.0074f731f8a211b06.min.css?v=a5c09059" />
+        <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=4c969af8" />
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="deep-orange">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="index.html" title="Picknblend Documentation" class="md-header__button md-logo" aria-label="Picknblend Documentation" data-md-component="logo">
+      <img src="_static/white.svg" alt="logo">
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Picknblend Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Usage
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="deep-orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="deep-orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="Picknblend Documentation" class="md-nav__button md-logo" aria-label="Picknblend Documentation" data-md-component="logo">
+      <img src="_static/white.svg" alt="logo">
+    </a>
+    Picknblend Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="introduction.html" class="md-nav__link">
+        <span class="md-ellipsis">Introduction</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="install.html" class="md-nav__link">
+        <span class="md-ellipsis">Installation</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="quickstart.html" class="md-nav__link">
+        <span class="md-ellipsis">Quick start</span>
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span class="md-ellipsis">Usage</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
+        <span class="md-ellipsis">Usage</span>
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#required-input-files" class="md-nav__link">
+    <span class="md-ellipsis">Required input files</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Required input files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#blender-board-model" class="md-nav__link">
+    <span class="md-ellipsis">Blender board model</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pnp-data" class="md-nav__link">
+    <span class="md-ellipsis">Pn<wbr>P data</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#component-library" class="md-nav__link">
+    <span class="md-ellipsis">Component library</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#optional-input-files" class="md-nav__link">
+    <span class="md-ellipsis">Optional input files</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Optional input files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#bill-of-materials" class="md-nav__link">
+    <span class="md-ellipsis">Bill of Materials</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pnp-override-file" class="md-nav__link">
+    <span class="md-ellipsis">Pn<wbr>P override file</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#importing-submodels" class="md-nav__link">
+    <span class="md-ellipsis">Importing submodels</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Importing submodels">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#components-with-reference-designator-a" class="md-nav__link">
+    <span class="md-ellipsis">Components with reference designator A</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#models-specified-as-sub-models-in-imported-blend-files" class="md-nav__link">
+    <span class="md-ellipsis">Models specified as sub-<wbr>models in imported .<wbr>blend files</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#outputs" class="md-nav__link">
+    <span class="md-ellipsis">Outputs</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cli-arguments" class="md-nav__link">
+    <span class="md-ellipsis">CLI arguments</span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="blendcfg.html" class="md-nav__link">
+        <span class="md-ellipsis">Configuring blendcfg.<wbr>yaml</span>
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset" role="main">
+                  
+
+
+<h1 id="usage">Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h1>
+<p>To run <code class="docutils literal notranslate"><span class="pre">picknblend</span></code>, execute:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>picknblend
+</code></pre></div>
+</div>
+<p>Since <code class="docutils literal notranslate"><span class="pre">picknblend</span></code> requires a config <code class="docutils literal notranslate"><span class="pre">blendcfg.yml</span></code> file in the project’s directory, the command will add a default version of the file (provided one is not present) and run the tool’s script.</p>
+<p>To add the configuration file without running the script, execute:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>picknblend<span class="w"> </span>-g
+</code></pre></div>
+</div>
+<p>Running the command above will overwrite any existing config file.</p>
+<p>The default configuration file can be adjusted to match a project, for example to add a library directory or change input directory names.</p>
+<h2 id="required-input-files">Required input files<a class="headerlink" href="#required-input-files" title="Link to this heading">¶</a></h2>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">picknblend</span></code> operates on fabrication outputs found in the <code class="docutils literal notranslate"><span class="pre">fab/</span></code> subdirectory in the directory from which the tool is executed.
+In order to generate a model, first create a <code class="docutils literal notranslate"><span class="pre">fab/</span></code> directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span><span class="o">[</span>path<span class="w"> </span>to<span class="w"> </span>project<span class="w"> </span>repository<span class="o">]</span>/
+mkdir<span class="w"> </span>fab/
+</code></pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">picknblend</span></code> requires the following input files:</p>
+<ul class="simple">
+<li><p>A Blender model of a board in <code class="docutils literal notranslate"><span class="pre">.blend</span></code> format (for detailed specification, see: <a class="reference internal" href="#blender-board-model"><span class="xref myst">Blender board model</span></a>). You can use <a class="reference external" href="https://antmicro.github.io/gerber2blend/index.html">gerber2blend</a> complementary tool to generate it.</p></li>
+<li><p>Pick and Place (PnP) data from a hardware project in <code class="docutils literal notranslate"><span class="pre">.csv</span></code> format</p></li>
+<li><p>A library of component 3D models in <code class="docutils literal notranslate"><span class="pre">.blend</span></code> format. We suggest using <a class="reference external" href="https://github.com/antmicro/hardware-components">Antmicro Hardware Components</a>.</p></li>
+<li><p>(Optional) A Bill of Materials (BOM) from a hardware project (required for importing models with markings that use the <code class="docutils literal notranslate"><span class="pre">SHOW_MARKINGS</span></code> <code class="docutils literal notranslate"><span class="pre">blendcfg.yaml</span></code> setting).</p></li>
+</ul>
+<h3 id="blender-board-model">Blender board model<a class="headerlink" href="#blender-board-model" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">picknblend</span></code> will recognize a Blender model as a correct board model when the following collection structure is defined:</p>
+<ul class="simple">
+<li><p><strong>root collection</strong> - named the same as the <code class="docutils literal notranslate"><span class="pre">.blend</span></code> file. If <code class="docutils literal notranslate"><span class="pre">gerber2blend</span></code> was used to generate the model, it will be the same as project name. If the project name weren’t sourced, it will be <code class="docutils literal notranslate"><span class="pre">unknownpcb</span></code>.</p></li>
+<li><p><strong>child collection</strong> - named <code class="docutils literal notranslate"><span class="pre">Board</span></code>, containing a PCB object named the same as the root collection.</p></li>
+</ul>
+<h3 id="pnp-data">PnP data<a class="headerlink" href="#pnp-data" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">picknblend</span></code> script can parse PnP data in <code class="docutils literal notranslate"><span class="pre">.csv</span></code> format from the <code class="docutils literal notranslate"><span class="pre">fab/</span></code> directory of the current hardware project (default) or the directory specified in the <code class="docutils literal notranslate"><span class="pre">FAB_DIR</span></code> setting in <code class="docutils literal notranslate"><span class="pre">blendcfg.yaml</span></code>.
+CSV files will be recognized as PnP data if they end with the <code class="docutils literal notranslate"><span class="pre">*pos.csv</span></code> suffix.
+<code class="docutils literal notranslate"><span class="pre">picknblend</span></code> can parse either separate side position files or a combined one.</p>
+<p>The CSV file must contain columns specified below.
+The order of the columns in the position file is not relevant.
+In order to support many EDA standards, multiple column names are accepted.</p>
+<ul class="simple">
+<li><p>reference designator (allowed column names: <code class="docutils literal notranslate"><span class="pre">Ref</span></code>, <code class="docutils literal notranslate"><span class="pre">Designator</span></code>)</p></li>
+<li><p>symbol name (allowed column names: <code class="docutils literal notranslate"><span class="pre">Val</span></code>, <code class="docutils literal notranslate"><span class="pre">Comment</span></code>)</p></li>
+<li><p>footprint name (allowed column names: <code class="docutils literal notranslate"><span class="pre">Package</span></code>, <code class="docutils literal notranslate"><span class="pre">Footprint</span></code>)</p></li>
+<li><p>position in X axis (allowed column names: <code class="docutils literal notranslate"><span class="pre">PosX</span></code>, <code class="docutils literal notranslate"><span class="pre">X</span></code>)</p></li>
+<li><p>position in Y axis (allowed column names: <code class="docutils literal notranslate"><span class="pre">PosY</span></code>, <code class="docutils literal notranslate"><span class="pre">Y</span></code>)</p></li>
+<li><p>rotation in Z axis (allowed column names: <code class="docutils literal notranslate"><span class="pre">Rot</span></code>, <code class="docutils literal notranslate"><span class="pre">Rotation</span></code>)</p></li>
+<li><p>side of PCB (allowed column names: <code class="docutils literal notranslate"><span class="pre">Side</span></code>, <code class="docutils literal notranslate"><span class="pre">Layer</span></code>) with possible values: <code class="docutils literal notranslate"><span class="pre">T</span></code>, <code class="docutils literal notranslate"><span class="pre">top</span></code>,<code class="docutils literal notranslate"><span class="pre">Top</span></code>,<code class="docutils literal notranslate"><span class="pre">TopLayer</span></code>,<code class="docutils literal notranslate"><span class="pre">B</span></code>,<code class="docutils literal notranslate"><span class="pre">bottom</span></code>,<code class="docutils literal notranslate"><span class="pre">Bottom</span></code>,<code class="docutils literal notranslate"><span class="pre">BottomLayer</span></code></p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To change the parsable column names and top/bottom side values, you can edit the <code class="docutils literal notranslate"><span class="pre">pnp.py</span></code> module.</p>
+</div>
+<h3 id="component-library">Component library<a class="headerlink" href="#component-library" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">picknblend</span></code> script will use a Blender model component library that follows these guidelines:</p>
+<ul class="simple">
+<li><p><strong>directory structure</strong> - any directory containing Blender models can serve as a library, with <code class="docutils literal notranslate"><span class="pre">.blend</span></code> files searched recursively.</p></li>
+<li><p><strong>model naming conventions</strong> - as <code class="docutils literal notranslate"><span class="pre">picknblend</span></code> supports importing generic and detailed models with part-specific markings, the following naming conventions must be followed:</p>
+<ul>
+<li><p>generic parts - <code class="docutils literal notranslate"><span class="pre">&lt;footprint&gt;.blend</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">0603_res.blend</span></code>)</p></li>
+<li><p>parts with markings - <code class="docutils literal notranslate"><span class="pre">&lt;footprint&gt;-&lt;manufacturer&gt;-&lt;mpn&gt;.blend</span></code>, where <code class="docutils literal notranslate"><span class="pre">&lt;manufacturer&gt;-&lt;mpn&gt;</span></code> part is slugified (e.g. <code class="docutils literal notranslate"><span class="pre">0603_res-yageo-rc0603jr0710k.blend</span></code>)</p></li>
+</ul>
+</li>
+<li><p><strong>model structure</strong> - each <code class="docutils literal notranslate"><span class="pre">.blend</span></code> file must contain a single object under a single collection.</p></li>
+</ul>
+<p>The paths to model libraries are configured via the <code class="docutils literal notranslate"><span class="pre">blendcfg.yaml</span></code> configuration file.
+Specifically, the <code class="docutils literal notranslate"><span class="pre">MODEL_LIBRARY_PATHS</span></code> field defines where the script will search for models.
+Libraries will be searched top-to-bottom as listed in <code class="docutils literal notranslate"><span class="pre">MODEL_LIBRARY_PATHS</span></code>.
+If a model with a given footprint exists in multiple libraries, the first library (top-most) in the list will take priority, preventing models from deeper libraries from being loaded for that footprint.</p>
+<p>Additionally libraries can be included by modifying the <code class="docutils literal notranslate"><span class="pre">MODEL_LIBRARY_PATHS</span></code> environment variable.
+This environment variable accepts a PATH-style <code class="docutils literal notranslate"><span class="pre">:</span></code>-delimited list of directories that should be prepended to the search path, meaning they will be searched before any paths defined in <code class="docutils literal notranslate"><span class="pre">blendcfg.yaml</span></code>.
+The order in which directories are listed in <code class="docutils literal notranslate"><span class="pre">MODEL_LIBRARY_PATHS</span></code> will dictate their search priority.</p>
+<h2 id="optional-input-files">Optional input files<a class="headerlink" href="#optional-input-files" title="Link to this heading">¶</a></h2>
+<h3 id="bill-of-materials">Bill of Materials<a class="headerlink" href="#bill-of-materials" title="Link to this heading">¶</a></h3>
+<p>A BOM is required when markings on chips are enabled in the configuration.
+The BOM needs to come in <code class="docutils literal notranslate"><span class="pre">.csv</span></code> format and contain the following columns:</p>
+<ul class="simple">
+<li><p>Manufacturer (allowed column names: <code class="docutils literal notranslate"><span class="pre">Manufacturer</span></code>, <code class="docutils literal notranslate"><span class="pre">Mfr</span></code>)</p></li>
+<li><p>Manufacturer Part Number (allowed column names: <code class="docutils literal notranslate"><span class="pre">MPN</span></code>)</p></li>
+<li><p>Footprint (allowed column names: <code class="docutils literal notranslate"><span class="pre">Footprint</span></code>, <code class="docutils literal notranslate"><span class="pre">Package</span></code>)</p></li>
+<li><p>Reference (allowed column names: <code class="docutils literal notranslate"><span class="pre">Ref</span></code>, <code class="docutils literal notranslate"><span class="pre">Reference</span></code>, <code class="docutils literal notranslate"><span class="pre">Designator</span></code>)</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To change the parsable column names, edit the <code class="docutils literal notranslate"><span class="pre">bom.py</span></code> module.</p>
+</div>
+<p>Additional requirements for the BOM file:</p>
+<ul class="simple">
+<li><p>The first row in the file must contain the names of columns; any additional info on top of the document must be removed (as some EDAs generate BOM files).</p></li>
+<li><p>Values in <code class="docutils literal notranslate"><span class="pre">Reference</span></code> fields must be separated with a space, not a comma.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Footprint</span></code> fields must contain only the name of a footprint; the library name must be removed (if generated by EDA).</p></li>
+</ul>
+<p>The order of columns in the BOM file is not relevant and additional columns in the file are allowed.</p>
+<p>In order to generate a BOM file in KiCad, follow the <a class="reference external" href="https://docs.kicad.org/7.0/en/eeschema/eeschema_generating_outputs.html#bom-export">KiCad documentation</a> with a default <code class="docutils literal notranslate"><span class="pre">bom_csv_grouped_by_value</span></code> generator script.
+Then adjust the file to the requirements mentioned above.</p>
+<h3 id="pnp-override-file">PnP override file<a class="headerlink" href="#pnp-override-file" title="Link to this heading">¶</a></h3>
+<p>The PnP override file allows you to define footprint names and position adjustments for component models on the PCB when importing PNP data exported from EDA software.
+This file should be placed in the same directory as the PnP files and <code class="docutils literal notranslate"><span class="pre">picknblend</span></code> will automatically recognize it if its name ends with the <code class="docutils literal notranslate"><span class="pre">override.csv</span></code> suffix.
+The override file must follow the same column structure as the PnP file.
+For specifying footprint name override, add new column <code class="docutils literal notranslate"><span class="pre">Override</span></code>.</p>
+<p>Guidelines for preparing the override file:</p>
+<ul class="simple">
+<li><p>Overrides can be applied to individual components by listing their reference designators in the <code class="docutils literal notranslate"><span class="pre">Ref</span></code> column (separated by spaces if more than one).</p></li>
+<li><p>Leaving the <code class="docutils literal notranslate"><span class="pre">Ref</span></code> column empty will apply the override to all components with the specified footprint name.</p></li>
+<li><p>If no override is required for a footprint, it can be omitted from the file.</p></li>
+<li><p>To override footprint name, specify new name in <code class="docutils literal notranslate"><span class="pre">Override</span></code> column.</p></li>
+<li><p>New footprint name will be also applied when searching for a model with marking.</p></li>
+<li><p>Define position overrides in the <code class="docutils literal notranslate"><span class="pre">PosX</span></code>, <code class="docutils literal notranslate"><span class="pre">PosY</span></code>, and <code class="docutils literal notranslate"><span class="pre">Rotation</span></code> columns with the required values or leave cells empty for values that don’t need adjustment.</p></li>
+<li><p>To move a component to the opposite side of the PCB, in the <code class="docutils literal notranslate"><span class="pre">Side</span></code> column set <code class="docutils literal notranslate"><span class="pre">flip</span></code> or leave it empty if no change is needed.</p></li>
+</ul>
+<h2 id="importing-submodels">Importing submodels<a class="headerlink" href="#importing-submodels" title="Link to this heading">¶</a></h2>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">picknblend</span></code> does not put any additional mechanical objects to the board objects if the switch <code class="docutils literal notranslate"><span class="pre">SHOW_MECHANICAL</span></code> in the <code class="docutils literal notranslate"><span class="pre">blendcfg.yml</span></code> file is not set to <code class="docutils literal notranslate"><span class="pre">True</span></code>.
+The two existing ways to specify a mechanical object on the board are described in the sections below.</p>
+<h3 id="components-with-reference-designator-a">Components with reference designator <code class="docutils literal notranslate"><span class="pre">A</span></code><a class="headerlink" href="#components-with-reference-designator-a" title="Link to this heading">¶</a></h3>
+<p>As long as component in the PnP file has a designator <code class="docutils literal notranslate"><span class="pre">A</span></code>, it won’t show up without setting the <code class="docutils literal notranslate"><span class="pre">SHOW_MECHANICAL</span></code> switch.</p>
+<h3 id="models-specified-as-sub-models-in-imported-blend-files">Models specified as sub-models in imported <code class="docutils literal notranslate"><span class="pre">.blend</span></code> files<a class="headerlink" href="#models-specified-as-sub-models-in-imported-blend-files" title="Link to this heading">¶</a></h3>
+<p>It is possible to define a model within a model, for instance a <code class="docutils literal notranslate"><span class="pre">PLUG_USB-C.blend</span></code> model within a <code class="docutils literal notranslate"><span class="pre">RECEPTACLE_USB-C.blend</span></code> model.
+All models defined this way will be treated as a sub-models and won’t show up without setting the <code class="docutils literal notranslate"><span class="pre">SHOW_MECHANICAL</span></code> switch.
+In order to define the <code class="docutils literal notranslate"><span class="pre">PLUG_USB-C.blend</span></code> sub-model within the <code class="docutils literal notranslate"><span class="pre">RECEPTACLE_USB-C.blend</span></code> model, follow the instructions:</p>
+<ol class="arabic simple">
+<li><p>Open <code class="docutils literal notranslate"><span class="pre">PLUG_USB-C.blend</span></code> using Blender.</p></li>
+<li><p>In the <code class="docutils literal notranslate"><span class="pre">Properties</span></code> area, go to the <code class="docutils literal notranslate"><span class="pre">Custom</span> <span class="pre">Properties</span></code> section within the <code class="docutils literal notranslate"><span class="pre">Object</span> <span class="pre">Properties</span></code> tab.</p></li>
+<li><p>Add a <code class="docutils literal notranslate"><span class="pre">PRIO</span></code> property with an integer value larger than zero - it will indicate to the script that this is a sub-model.</p></li>
+<li><p>Save and close the file.</p></li>
+<li><p>Open <code class="docutils literal notranslate"><span class="pre">RECEPTACLE_USB-C.blend</span></code> using Blender.</p></li>
+<li><p>In the <code class="docutils literal notranslate"><span class="pre">Properties</span></code> area, go to the <code class="docutils literal notranslate"><span class="pre">Custom</span> <span class="pre">Properties</span></code> section within <code class="docutils literal notranslate"><span class="pre">Object</span> <span class="pre">Properties</span></code> tab.</p></li>
+<li><p>Add a <code class="docutils literal notranslate"><span class="pre">PRIO</span></code> property with an integer value of <code class="docutils literal notranslate"><span class="pre">0</span></code> (zero) - it will indicate to the script that this is the main model.</p></li>
+<li><p>Add a <code class="docutils literal notranslate"><span class="pre">1_MODEL_NAME</span></code> property with a string value of <code class="docutils literal notranslate"><span class="pre">PLUG_USB-C</span></code>, defining the name of the sub-model file.</p></li>
+<li><p>Add a <code class="docutils literal notranslate"><span class="pre">1_PLUG_USB-C_POS</span></code> property with float array values defining the X, Y and Z positions of the sub-model in respect to main model’s origin.</p></li>
+<li><p>Add a <code class="docutils literal notranslate"><span class="pre">1_PLUG_USB-C_ROTATE</span></code> property with float array values defining the X, Y and Z rotation of the sub-model in respect to main model’s origin.</p></li>
+<li><p>Save and close the file.</p></li>
+</ol>
+<p>If the main model should contain more sub-models, simply add more custom properties with appropriate names and values. As an example, a double USB connector should contain the following properties:
+[<code class="docutils literal notranslate"><span class="pre">PRIO</span></code>, <code class="docutils literal notranslate"><span class="pre">1_MODEL_NAME</span></code>, <code class="docutils literal notranslate"><span class="pre">1_&lt;MODEL_1_NAME&gt;_POS</span></code>, <code class="docutils literal notranslate"><span class="pre">1_&lt;MODEL_1_NAME&gt;_ROTATE</span></code>, <code class="docutils literal notranslate"><span class="pre">2_MODEL_NAME</span></code>, <code class="docutils literal notranslate"><span class="pre">2_&lt;MODEL_2_NAME&gt;_POS</span></code>, <code class="docutils literal notranslate"><span class="pre">2_&lt;MODEL_2_NAME&gt;_ROTATE</span></code>].</p>
+<h2 id="outputs">Outputs<a class="headerlink" href="#outputs" title="Link to this heading">¶</a></h2>
+<p>The resulting PCB model file, <code class="docutils literal notranslate"><span class="pre">&lt;project-name&gt;.blend</span></code>, with components placed on it, is saved in <code class="docutils literal notranslate"><span class="pre">[path</span> <span class="pre">to</span> <span class="pre">project</span> <span class="pre">repository]/fab/</span></code>.
+It overwrites the initial file containing the PCB model.
+All imported components will be added to the <code class="docutils literal notranslate"><span class="pre">Components</span></code> collection, under the <code class="docutils literal notranslate"><span class="pre">&lt;project-name&gt;</span></code> root collection.
+Components will be parented to the PCB model, so that PCB translations affect components as well.</p>
+<h2 id="cli-arguments">CLI arguments<a class="headerlink" href="#cli-arguments" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">picknblend</span></code> supports the following command line arguments:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-d</span></code> - enables debug logging</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-r</span></code> - re-imports all components in the already existing <code class="docutils literal notranslate"><span class="pre">fab/&lt;project-name&gt;.blend</span></code> file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">CONFIG_PRESET</span></code> - uses a selected <code class="docutils literal notranslate"><span class="pre">blendcfg</span></code> preset</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-b</span> <span class="pre">BLEND_PATH</span></code> - specifies a path to file, if different from the project file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-g</span></code> - copies <code class="docutils literal notranslate"><span class="pre">blendcfg.yaml</span></code> file from template into current working directory. This will overwrite the existing config file.</p></li>
+</ul>
+
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      Last update:
+      2025-12-11
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="quickstart.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Quick start" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Quick start
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="blendcfg.html" class="md-footer__link md-footer__link--next" aria-label="Next: Configuring blendcfg.yaml" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Configuring blendcfg.yaml
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  
+  
+  <div class="md-footer-meta md-typeset">
+    
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-footer-copyright__highlight">
+        Copyright &#169; Antmicro, 2025.
+        
+    </div>
+  
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/antmicro" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/antmicro" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+    
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": ".", "features": ["toc.integrate"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+      
+        <script src="_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=8ec58cb5"></script>
+        <script src="_static/tabs.js?v=3ee01567"></script>
+    
+  </body>
+</html>

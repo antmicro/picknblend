@@ -1,0 +1,13 @@
+default: 
+  SETTINGS: 
+    FAB_DIR: fab                    # default directory name containing fabrication files
+    BOM_DIR: doc                    # default directory name containing BOM file
+    PRJ_EXTENSION: .kicad_pro       # default extension of project based on which the name of the blend is generated
+    MODEL_LIBRARY_PATHS:            # default paths to model library folders, can be overridden by MODEL_LIBRARY_PATHS
+      - $HOME/.local/share/antmicro-blender-models/
+      - $HOME/.local/share/antmicro-hardware-components/
+    APPLY_TRANSFORMS: True          # if True, transforms will be applied to all components
+
+  EFFECTS:
+    SHOW_MECHANICAL: False          # imports additional components like plugs
+    SHOW_MARKINGS: True             # if True, requires *bom-populated.csv output
